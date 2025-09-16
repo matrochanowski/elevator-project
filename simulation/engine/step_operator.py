@@ -1,78 +1,81 @@
-from utils import *
+from simulation.engine.utils import *
+
+from simulation.core.elevator_system import ElevatorSystem
+
 import random
 
 
-def operator(actions, max_floor, spawn_chance, max_people_floor,
-             people_array, winda, winda2, elevators, passengers_at_dest,
-             opening_door_delay, elevator_system, algorithm='classical'):
+def operator(actions, elevator_system: ElevatorSystem):
     def increase_personal_counter_elevator(elevator):
         for passenger_inside in elevator.people_inside_arr:
             passenger_inside.increase_waiting_time()
 
     def increase_personal_counter_floors():
-        for floor in people_array:
+        for floor in elevator_system.people_array:
             for passenger_outside in floor:
                 if passenger_outside is not None:
                     passenger_outside.increase_waiting_time()
 
-    def apply_actions_to_elevators(elevator_list, actions):
-        """
-        Given a list of elevators and a list of actions (e.g., ["UP", "STANDING"]),
-        apply the movement logic based on the action.
-        """
-        for i, lift in enumerate(elevator_list):
-            action = actions[i]
+    def apply_actions_to_elevators(elevator_list, acts):
+        for i, elv in enumerate(elevator_list):
+            action = acts[i]
 
-            if lift.delay > 0:
-                continue  # Elevator is currently delayed, skip its turn
+            if elv.delay > 0:
+                continue  # Elevator is currently delayed
 
             if action == "UP":
-                lift.state_up()
-                floor_up(lift)
+                elv.state_up()
+                floor_up(elv)
 
             elif action == "DOWN":
-                lift.state_down()
-                floor_down(lift)
+                elv.state_down()
+                floor_down(elv)
 
             elif action == "STANDING":
-                lift.state_none()
+                elv.state_none()
 
-    apply_actions_to_elevators(elevators, actions)
+    # --- wykonanie akcji ---
+    apply_actions_to_elevators(elevator_system.elevators, actions)
 
-    # ----- sprawdź czy otworzyć drzwi windy -----
-    if winda.state == 'STANDING' and winda.delay == 0:
-        if winda.decide_if_stop(elevator_system):
-            visiting_floor(winda.current_floor, winda, people_array, passengers_at_dest, opening_door_delay)
-    if winda2.state == 'STANDING' and winda2.delay == 0:
-        if winda2.decide_if_stop(elevator_system):
-            visiting_floor(winda2.current_floor, winda2, people_array, passengers_at_dest, opening_door_delay)
+    # --- sprawdź drzwi i obsłuż pasażerów dla każdej windy ---
+    for lift in elevator_system.elevators:
+        if lift.state == "STANDING" and lift.delay == 0:
+            if lift.decide_if_stop(elevator_system):
+                visiting_floor(
+                    lift.current_floor,
+                    lift,
+                    elevator_system.people_array,
+                    elevator_system.passengers_at_dest,
+                    elevator_system.opening_door_delay,
+                )
 
-    current_floor = winda.current_floor
-    manage_requests(current_floor, elevator_system, people_array)
-    current_state = winda.state
-    requested_floors = elevator_system.requested_floors
-
-    # ----- zewnętrzne operacje pasażerów -----
+    # --- obsłuż spawn pasażerów ---
     new_floors_arr = []
-    if random.randint(0, spawn_chance) == 1:  # 1 / spawn_chance szansy na jakichś pasażerów w turze
-        new_floors_arr = generate_passengers(max_floor, max_people_floor, people_array)
+    if random.randint(0, elevator_system.spawn_chance) == 1:
+        new_floors_arr = generate_passengers(
+            elevator_system.max_floor,
+            elevator_system.max_people_floor,
+            elevator_system.people_array,
+        )
     for new_floor in new_floors_arr:
-        if new_floor not in requested_floors:
-            elevator_system.add_floor_to_requested_queue(new_floor)  # wciskanie przycisków żądania windy
-    winda.update_people_inside()
-    winda2.update_people_inside()
+        if new_floor not in elevator_system.requested_floors:
+            elevator_system.add_floor_to_requested_queue(new_floor)
 
-    manage_requests(current_floor, elevator_system, people_array)
-    # ----- zwiększanie czasu oczekiwania wszystkich osób w systemie -----
-    increase_personal_counter_elevator(winda)
-    increase_personal_counter_elevator(winda2)
+    # --- aktualizacja ludzi w windach ---
+    for lift in elevator_system.elevators:
+        lift.update_people_inside()
+
+    # --- zwiększanie czasu oczekiwania ---
+    for lift in elevator_system.elevators:
+        increase_personal_counter_elevator(lift)
     increase_personal_counter_floors()
 
-    if winda.delay > 0:
-        winda.delay -= 1
-    if winda2.delay > 0:
-        winda2.delay -= 1
+    # --- zmniejszanie delay ---
+    for lift in elevator_system.elevators:
+        if lift.delay > 0:
+            lift.delay -= 1
 
-    vector_state = get_system_state(list(elevators), elevator_system)
+    # --- wektor stanu systemu ---
+    vector_state = get_system_state(elevator_system.elevators, elevator_system)
 
-    return elevators, elevator_system, vector_state
+    return elevator_system.elevators, elevator_system, vector_state
