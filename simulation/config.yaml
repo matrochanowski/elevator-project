@@ -1,0 +1,5 @@
+floors: 5
+max_people_floor: 10
+delay: 4
+max_people_elevator: 5
+steps: 100

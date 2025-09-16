@@ -1,4 +1,6 @@
 from simulation.core.person import Person
+from simulation.core.elevator import Elevator
+from simulation.core.elevator_system import ElevatorSystem
 import copy
 import numpy as np
 from typing import List, Set, Tuple
@@ -25,7 +27,7 @@ def generate_passengers(max_floor, max_people_floor, people_array):
     return new_floors_arr
 
 
-def visiting_floor(floor_int, elevator, people_array, passengers_at_dest, opening_door_delay):
+def visiting_floor(floor_int, elevator: Elevator, people_array, passengers_at_dest, opening_door_delay):
     """
     Wykonaj akcje związane z odwiedzinami piętra
     :param floor_int: Aktualne piętro
@@ -85,7 +87,7 @@ def sort_passengers(passengers_array):
     return sorted(filter(lambda x: x is not None, passengers_array), key=lambda person: person.wait_time, reverse=True)
 
 
-def manage_requests(current_floor, elevator, people_array):
+def manage_requests(current_floor, elevator: Elevator, people_array):
     """
     Odkliknij i kliknij przyciski na piętrach
     :param current_floor: Aktualne piętro
@@ -101,7 +103,7 @@ def manage_requests(current_floor, elevator, people_array):
     elevator.remove_floor_from_requested(current_floor)
 
 
-def floor_up(elevator):
+def floor_up(elevator: Elevator):
     """
     Funkcja podwyższa obiekt klasy Elevator o piętro
     :param elevator: Obiekt klasy Elevator
@@ -111,7 +113,7 @@ def floor_up(elevator):
     elevator.delay += elevator.speed
 
 
-def floor_down(elevator):
+def floor_down(elevator: Elevator):
     """
     Funkcja obniża obiekt klasy Elevator o piętro
     :param elevator: Obiekt klasy Elevator
@@ -121,7 +123,7 @@ def floor_down(elevator):
     elevator.delay += elevator.speed
 
 
-def find_minimal(elevator):
+def find_minimal(elevator: Elevator):
     """
     Funkcja znajduje najniższe zażądane piętro
     :param elevator: Obiekt klasy Elevator
@@ -136,7 +138,7 @@ def find_minimal(elevator):
     return min(chosen_floors + requested_floors, default=0)
 
 
-def find_maximal(elevator):
+def find_maximal(elevator: Elevator):
     """
     Funkcja znajduje najwyższe zażądane piętro
         :param elevator: Obiekt klasy Elevator
@@ -151,12 +153,11 @@ def find_maximal(elevator):
     return max(chosen_floors + requested_floors, default=99999)
 
 
-def increase_personal_counter(elevator, people_array, step=1):
+def increase_personal_counter(elevator: Elevator, people_array):
     """
     Funkcja zwiększa czas oczekiwania wszystkich pasażerów biorących udział w symulacji
     :param elevator: Obiekt klasy Elevator
     :param people_array:
-    :param step: Liczba, o którą należy zwiększyć czas oczekiwania pasażerów
     :return:
     """
     for passenger_inside in elevator.people_inside_arr:
@@ -167,7 +168,7 @@ def increase_personal_counter(elevator, people_array, step=1):
                 passenger_outside.increase_waiting_time()
 
 
-def how_many_people(people_array, elevators):
+def how_many_people(people_array, elevators: List[Elevator]):
     people = 0
     for floor in people_array:
         for person in floor:
@@ -182,8 +183,8 @@ def how_many_people(people_array, elevators):
 
 
 def get_system_state(
-        elevators: List,
-        elevator_system) -> np.ndarray:
+        elevators: List[Elevator],
+        elevator_system: ElevatorSystem) -> np.ndarray:
     """
     Encode the state of a multi-elevator system for reinforcement learning.
 
@@ -197,7 +198,7 @@ def get_system_state(
     Final state vector shape: E * (F + 2) + F
     """
     E = len(elevators)
-    F = elevator_system.max_possible_floor + 1
+    F = elevator_system.max_floor + 1
 
     sub_states = []
     for elev in elevators:
