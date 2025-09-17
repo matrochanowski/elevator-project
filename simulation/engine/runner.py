@@ -7,28 +7,59 @@ from simulation.core.elevator import Elevator
 
 from simulation.engine.step_operator import operator
 
+from simulation.visualisation.renderer import Renderer
+
 ALGORITHM = nearest_car_policy
 
-config = config.load_config()
-
-FLOORS = 5
-MAX_PEOPLE_FLOOR = 10
-DELAY = 4
-MAX_PEOPLE_ELEVATOR = 5
+cfg = config.load_config()
 
 
-def run_simulation(steps: int, system: ElevatorSystem):
-    i = 0
-    while i < steps:
-        action = ALGORITHM(system)
-        _, system, _ = operator(action, system)
-        i += 1
-        print(action)
+def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, renderer):
+    screen = None
+    clock = None
+    pygame = None
+
+    if visualisation:
+        import pygame
+        pygame.init()
+        screen = pygame.display.set_mode((renderer.WIDTH, renderer.HEIGHT))
+        pygame.display.set_caption("Elevator Simulation")
+        clock = pygame.time.Clock()
+
+    running = True
+    step_count = 0
+
+    while running and step_count < steps:
+        # --- Event Handling (tylko w trybie viz) ---
+        if visualisation:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+
+        # --- Simulation Step ---
+        actions = policy(system)
+        _, system, _ = operator(actions, system)
+
+        # --- Drawing (tylko w trybie viz) ---
+        if visualisation:
+            screen.fill(renderer.BLACK)
+            renderer.draw(screen, system)
+            pygame.display.flip()
+            clock.tick(15)
+
+        step_count += 1
+
+    if visualisation:
+        pygame.quit()
+
+    return system
 
 
-building = ElevatorSystem(config["floors"], 10, config["max_people_floor"], config["delay"])
+building = ElevatorSystem(cfg["floors"], 25, cfg["max_people_floor"], cfg["delay"])
 building.elevators = [
-    Elevator(config["max_people_elevator"], config["floors"]),
-    Elevator(config["max_people_elevator"], config["floors"])
+    Elevator(cfg["max_people_elevator"], cfg["floors"]),
+    Elevator(cfg["max_people_elevator"], cfg["floors"]),
+    Elevator(cfg["max_people_elevator"], cfg["floors"])
 ]
-run_simulation(config["steps"], building)
+renderer_obj = Renderer(cfg["floors"])
+print(run_simulation(cfg["steps"], building, ALGORITHM, cfg["visualisation"], renderer_obj))

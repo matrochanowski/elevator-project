@@ -13,6 +13,19 @@ class ElevatorSystem:
         self.passengers_at_dest = []  # lista pasażerów, którzy dotarli do celu
         self.requested_floors = []  # piętra "wezwane" do obsługi
 
+    def __str__(self):
+        info = [f"ElevatorSystem status:", f"Max floor: {self.max_floor}", f"Requested floors: {self.requested_floors}",
+                f"Passengers at destination: {len(self.passengers_at_dest)}", "Elevators:"]
+        for i, elevator in enumerate(self.elevators):
+            info.append(
+                f"  Elevator {i}: Floor {elevator.current_floor}, Chosen floors: {elevator.chosen_floors}, Passengers: {len(elevator.people_inside_arr)}")
+        info.append("People waiting on floors:")
+        for floor in range(self.max_floor + 1):
+            waiting = [p for p in self.people_array[floor] if p is not None]
+            if waiting:
+                info.append(f"  Floor {floor}: {len(waiting)} people waiting")
+        return "\n".join(info)
+
     def add_elevator(self, elevator):
         self.elevators.append(elevator)
 

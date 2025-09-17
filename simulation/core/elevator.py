@@ -1,5 +1,5 @@
 class Elevator:
-    def __init__(self, max_people_inside, max_possible_floor, starting_floor=0, speed=1):
+    def __init__(self, max_people_inside, max_possible_floor, starting_floor=0, speed=5):
         self.current_floor = starting_floor
         self.people_inside_int = 0
         self.max_people_inside = max_people_inside
