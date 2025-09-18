@@ -27,16 +27,20 @@ def generate_passengers(max_floor, max_people_floor, people_array):
     return new_floors_arr
 
 
-def visiting_floor(floor_int, elevator: Elevator, people_array, passengers_at_dest, opening_door_delay):
+def visiting_floor(floor_int, elevator: Elevator, elevator_system: ElevatorSystem):
     """
     Wykonaj akcje związane z odwiedzinami piętra
     :param floor_int: Aktualne piętro
     :param elevator: Obiekt z klasy Elevator
-    :param people_array: Macierz numpy o wymiarach liczba piętra x maksymalna ilość osób w piętrze
-    :param passengers_at_dest: Lista obiektów klasy Person, które skończyły udział w symulacji
-    :param opening_door_delay: Liczba kroków, która zajmuje otworzenie drzwi windy.
+    :param elevator_system: Obiekt klasy ElevatorSystem
     :return:
     """
+    (people_array,
+     passengers_at_dest,
+                 speed) = (elevator_system.people_array,
+                           elevator_system.passengers_at_dest,
+                           elevator.speed)
+
     # wysiadanie pasażerów:
     passengers_inside_arr = elevator.people_inside_arr
     passengers_leaving_arr = []
@@ -55,12 +59,16 @@ def visiting_floor(floor_int, elevator: Elevator, people_array, passengers_at_de
         if sorted_floor[i] is not None:
             passengers_entering_arr.append(sorted_floor[i])
 
+    if passengers_entering_arr:
+        elevator_system.remove_floor_from_requested(floor_int)
+
+
     elevator.enter(passengers_entering_arr)
-    # usuwanie osób z piętra które wsiadły do windy
+    # usuwanie osób z piętra, które wsiadły do windy
     for passenger in people_array[floor_int]:
         if passenger in passengers_entering_arr:
             people_array[people_array == passenger] = None
-    elevator.delay += opening_door_delay
+    elevator.delay += speed
 
 
 def how_much_passengers_floor(floor_int, people_array):
@@ -87,22 +95,6 @@ def sort_passengers(passengers_array):
     return sorted(filter(lambda x: x is not None, passengers_array), key=lambda person: person.wait_time, reverse=True)
 
 
-def manage_requests(current_floor, elevator: Elevator, people_array):
-    """
-    Odkliknij i kliknij przyciski na piętrach
-    :param current_floor: Aktualne piętro
-    :param elevator: Obiekt klasy Elevator
-    :param people_array:
-    :return: Macierz numpy o wymiarach liczba piętra x maksymalna ilość osób w piętrze
-    """
-    # jeżeli jest jakikolwiek pasażer na piętrze, to niech przycisk tego piętra będzie wciśnięty
-    for passenger in people_array[current_floor]:
-        if passenger is not None:
-            elevator.add_floor_to_requested_queue(current_floor)
-            return None
-    elevator.remove_floor_from_requested(current_floor)
-
-
 def floor_up(elevator: Elevator):
     """
     Funkcja podwyższa obiekt klasy Elevator o piętro
@@ -121,36 +113,6 @@ def floor_down(elevator: Elevator):
     """
     elevator.decrease_floor()
     elevator.delay += elevator.speed
-
-
-def find_minimal(elevator: Elevator):
-    """
-    Funkcja znajduje najniższe zażądane piętro
-    :param elevator: Obiekt klasy Elevator
-    :return: Najniższe zażądane piętro
-    """
-    chosen_floors = elevator.chosen_floors
-    requested_floors = elevator.requested_floors
-
-    if not chosen_floors and not requested_floors:
-        return 0
-
-    return min(chosen_floors + requested_floors, default=0)
-
-
-def find_maximal(elevator: Elevator):
-    """
-    Funkcja znajduje najwyższe zażądane piętro
-        :param elevator: Obiekt klasy Elevator
-        :return: Najwyższe zażądane piętro
-        """
-    chosen_floors = elevator.chosen_floors
-    requested_floors = elevator.requested_floors
-
-    if not chosen_floors and not requested_floors:
-        return 99999
-
-    return max(chosen_floors + requested_floors, default=99999)
 
 
 def increase_personal_counter(elevator: Elevator, people_array):

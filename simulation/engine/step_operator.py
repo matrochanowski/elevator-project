@@ -44,9 +44,7 @@ def operator(actions, elevator_system: ElevatorSystem):
                 visiting_floor(
                     lift.current_floor,
                     lift,
-                    elevator_system.people_array,
-                    elevator_system.passengers_at_dest,
-                    elevator_system.opening_door_delay,
+                    elevator_system
                 )
 
     # --- obsłuż spawn pasażerów ---

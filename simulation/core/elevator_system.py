@@ -6,7 +6,6 @@ class ElevatorSystem:
         self.max_floor = max_floor
         self.spawn_chance = spawn_chance
         self.max_people_floor = max_people_per_floor
-        self.opening_door_delay = opening_door_delay
 
         self.elevators = []  # lista obiektów Elevator
         self.people_array = np.full((max_floor + 1, self.max_people_floor), None, dtype=object)
