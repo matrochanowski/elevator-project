@@ -3,9 +3,9 @@ from simulation.core.elevator_system import ElevatorSystem
 
 def nearest_car_policy(elevator_system: ElevatorSystem):
     """
-    Naiwny algorytm 'Nearest Car':
+    Naiwny algorytm 'Nearest Car' (ulepszony):
     - Jeśli winda ma pasażerów, obsługuje ich docelowe piętra.
-    - Jeśli winda jest pusta, jedzie do najbliższego wezwania.
+    - Jeśli winda jest pusta, jedzie do najbliższych wezwań (może mieć wiele przypisanych).
     - Rozstrzyga remisy wybierając windę stojącą albo z mniejszym obciążeniem.
     Zwraca listę akcji: ["UP", "DOWN", "STANDING", ...].
     """
@@ -13,17 +13,15 @@ def nearest_car_policy(elevator_system: ElevatorSystem):
     actions = ["STANDING"] * len(elevator_system.elevators)
 
     # --- krok 1: przypisanie wezwań do wind ---
-    assignments = {i: None for i in range(len(elevator_system.elevators))}
+    assignments = {i: [] for i in range(len(elevator_system.elevators))}
 
     for floor in elevator_system.requested_floors:
         nearest_idx = None
         nearest_dist = float("inf")
 
         for i, elevator in enumerate(elevator_system.elevators):
-            # jeśli winda ma pasażerów → nie przydzielamy jej nowych wezwań
-            if elevator.people_inside_int > 0:
-                continue
-
+            # jeśli winda ma pasażerów → nadal można jej przypisać wezwanie
+            # (ale obsłuży je dopiero po wysadzeniu pasażerów)
             dist = abs(elevator.current_floor - floor)
 
             if dist < nearest_dist:
@@ -38,7 +36,7 @@ def nearest_car_policy(elevator_system: ElevatorSystem):
                     nearest_idx = i
 
         if nearest_idx is not None:
-            assignments[nearest_idx] = floor
+            assignments[nearest_idx].append(floor)
 
     # --- krok 2: decyzja dla każdej windy ---
     for i, elevator in enumerate(elevator_system.elevators):
@@ -47,12 +45,11 @@ def nearest_car_policy(elevator_system: ElevatorSystem):
 
         # priorytet: najpierw pasażerowie w środku
         if elevator.chosen_floors:
-            # wybieramy najbliższe piętro z chosen_floors
             target = min(elevator.chosen_floors, key=lambda f: abs(f - elevator.current_floor))
 
-        # jeśli brak pasażerów → jedź do wezwania
-        elif assignments[i] is not None:
-            target = assignments[i]
+        # jeśli brak pasażerów → bierz wezwanie z kolejki przypisań
+        elif assignments[i]:
+            target = min(assignments[i], key=lambda f: abs(f - elevator.current_floor))
 
         if target is None:
             actions[i] = "STANDING"

@@ -1,3 +1,6 @@
+from simulation.core.elevator_system import ElevatorSystem
+
+
 class Elevator:
     def __init__(self, max_people_inside, max_possible_floor, starting_floor=0, speed=5):
         self.current_floor = starting_floor
@@ -5,7 +8,6 @@ class Elevator:
         self.max_people_inside = max_people_inside
         self.max_possible_floor = max_possible_floor
 
-        self.requested_floors = []
         self.chosen_floors = []
         self.queue = None  # fully managed by operator
         self.state = "STANDING"
@@ -69,24 +71,6 @@ class Elevator:
         """
         self.state = "STANDING"
 
-    def add_floor_to_requested_queue(self, new_floor):
-        """
-        Metoda dodająca piętro do listy z żądaniami
-        :param new_floor: indeks piętra
-        :return:
-        """
-        if new_floor not in self.requested_floors:
-            self.requested_floors.append(new_floor)
-
-    def remove_floor_from_requested(self, floor):
-        """
-        Metoda usuwająca wybrane piętro z listy z żądaniami
-        :param floor: indeks piętra
-        :return:
-        """
-        if floor in self.requested_floors:
-            self.requested_floors.remove(floor)
-
     def add_floor_to_chosen_queue(self, new_floor):
         """
         Metoda dodająca piętro do listy z wybranymi piętrami (z zewnątrz)
@@ -104,28 +88,17 @@ class Elevator:
         if floor in self.chosen_floors:
             self.chosen_floors.remove(floor)
 
-    def decide_if_stop(self, elevator_system=None):
+    def decide_if_stop(self, elevator_system: ElevatorSystem):
         """
         Metoda decydująca, czy winda powinna zatrzymać się na danym piętrze
         :param elevator_system: Obiekt klasy ElevatorSystem
         :return: True or False
         """
-        if elevator_system is None:
-            if self.current_floor in self.requested_floors:
-                return True
-        else:
-            if self.current_floor in elevator_system.requested_floors:
-                return True
+        if self.current_floor in elevator_system.requested_floors:
+            return True
         if self.current_floor in self.chosen_floors:
             return True
         return None
-
-    def pop_visited_floor(self):
-        """
-        Metoda usuwająca z listy z żądaniami odwiedzone piętro.
-        :return:
-        """
-        self.requested_floors.remove(self.current_floor)
 
     def increase_floor(self):
         """
@@ -152,31 +125,3 @@ class Elevator:
         :return: Ile osób może się jeszcze zmieścić do windy
         """
         return self.max_people_inside - self.people_inside_int
-
-    def requested_chosen_floors_above(self):
-        """
-        Metoda zwracająca żądane piętra, które są ponad aktualnym piętrem
-        :return: Listę zawierającą indeksy żądanych pięter nad windą
-        """
-        above = []
-        for requested_floor in self.requested_floors:
-            if requested_floor > self.current_floor:
-                above.append(requested_floor)
-        for chosen_floor in self.chosen_floors:
-            if chosen_floor > self.current_floor:
-                above.append(chosen_floor)
-        return above
-
-    def requested_chosen_floors_below(self):
-        """
-            Method zwracająca żądane piętra, które są poniżej aktualnego piętra
-            :return: Lista zawierająca indeksy żądanych pięter nad windą
-                """
-        below = []
-        for requested_floor in self.requested_floors:
-            if requested_floor < self.current_floor:
-                below.append(requested_floor)
-        for chosen_floor in self.chosen_floors:
-            if chosen_floor < self.current_floor:
-                below.append(chosen_floor)
-        return below
