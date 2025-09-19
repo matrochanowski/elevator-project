@@ -1,6 +1,26 @@
-floors: 15
-max_people_floor: 10
-delay: 4
-max_people_elevator: 5
-steps: 3000
+floors: 8
+max_people_floor: 12
+steps: 1918
 visualisation: true
+elevators:
+- max_people: 5
+  speed: 5
+  starting_floor: 0
+- max_people: 5
+  speed: 5
+  starting_floor: 0
+- max_people: 5
+  speed: 5
+  starting_floor: 0
+- max_people: 5
+  speed: 5
+  starting_floor: 0
+- max_people: 5
+  speed: 5
+  starting_floor: 0
+- max_people: 5
+  speed: 5
+  starting_floor: 0
+- max_people: 5
+  speed: 5
+  starting_floor: 0
