@@ -55,11 +55,9 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
     return system
 
 
-building = ElevatorSystem(cfg["floors"], 25, cfg["max_people_floor"], cfg["delay"])
-building.elevators = [
-    Elevator(cfg["max_people_elevator"], cfg["floors"]),
-    Elevator(cfg["max_people_elevator"], cfg["floors"]),
-    Elevator(cfg["max_people_elevator"], cfg["floors"])
-]
-renderer_obj = Renderer(cfg["floors"])
-print(run_simulation(cfg["steps"], building, ALGORITHM, cfg["visualisation"], renderer_obj))
+building = ElevatorSystem(cfg.floors, 25, cfg.max_people_floor)
+building.elevators = [Elevator(max_people_inside=elevator.max_people,
+                               max_possible_floor=cfg.floors,
+                               speed=elevator.speed) for elevator in cfg.elevators]
+renderer_obj = Renderer(cfg.floors)
+print(run_simulation(cfg.steps, building, ALGORITHM, cfg.visualisation, renderer_obj))

@@ -6,7 +6,7 @@ def nearest_car_policy(elevator_system: ElevatorSystem):
     Naiwny algorytm 'Nearest Car' (ulepszony):
     - Jeśli winda ma pasażerów, obsługuje ich docelowe piętra.
     - Jeśli winda jest pusta, jedzie do najbliższych wezwań (może mieć wiele przypisanych).
-    - Rozstrzyga remisy wybierając windę stojącą albo z mniejszym obciążeniem.
+    - Rozstrzyga remisy, wybierając windę stojącą albo z mniejszym obciążeniem.
     Zwraca listę akcji: ["UP", "DOWN", "STANDING", ...].
     """
 

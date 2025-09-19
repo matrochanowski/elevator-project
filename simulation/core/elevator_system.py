@@ -2,7 +2,7 @@ import numpy as np
 
 
 class ElevatorSystem:
-    def __init__(self, max_floor, spawn_chance, max_people_per_floor, opening_door_delay):
+    def __init__(self, max_floor, spawn_chance, max_people_per_floor):
         self.max_floor = max_floor
         self.spawn_chance = spawn_chance
         self.max_people_floor = max_people_per_floor
