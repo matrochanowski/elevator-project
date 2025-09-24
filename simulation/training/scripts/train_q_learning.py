@@ -2,7 +2,7 @@ from simulation import config
 from simulation.core.elevator_system import ElevatorSystem
 from simulation.core.elevator import Elevator
 from simulation.engine.step_operator import operator
-from simulation.training.models.q_learning_agent import QLearningAgent
+from simulation.training.agents.q_learning_agent import QLearningAgent
 
 cfg = config.load_config()
 
@@ -53,11 +53,11 @@ def train_q_learning(episodes=100, steps=200, agent=QLearningAgent(ACTIONS)):
 
 
 if __name__ == "__main__":
-    trained_agent = train_q_learning(episodes=1000)
-    trained_agent = train_q_learning(episodes=1000, agent=trained_agent)
-    trained_agent = train_q_learning(episodes=1000, agent=trained_agent)
-    trained_agent = train_q_learning(episodes=1000, agent=trained_agent)
-    trained_agent = train_q_learning(episodes=1000, agent=trained_agent)
-    trained_agent = train_q_learning(episodes=1000, agent=trained_agent)
+    trained_agent = train_q_learning(episodes=500)
+    # trained_agent = train_q_learning(episodes=1000, agent=trained_agent)
+    # trained_agent = train_q_learning(episodes=1000, agent=trained_agent)
+    # trained_agent = train_q_learning(episodes=1000, agent=trained_agent)
+    # trained_agent = train_q_learning(episodes=1000, agent=trained_agent)
+    # trained_agent = train_q_learning(episodes=1000, agent=trained_agent)
 
     trained_agent.save("q_agent.pkl")

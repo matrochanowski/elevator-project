@@ -17,3 +17,4 @@ class ConfigSchema(BaseModel):
     visualisation: bool
     elevators: List[ElevatorConfigSchema]
     algorithm: Algorithm
+    model: str | None = None

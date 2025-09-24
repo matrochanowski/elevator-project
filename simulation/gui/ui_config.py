@@ -100,6 +100,12 @@ class Ui_MainWindow(object):
         self.label_5 = QLabel(self.page_2)
         self.label_5.setObjectName(u"label_5")
         self.label_5.setGeometry(QRect(70, 250, 221, 16))
+        self.label_6 = QLabel(self.page_2)
+        self.label_6.setObjectName(u"label_6")
+        self.label_6.setGeometry(QRect(70, 300, 221, 16))
+        self.ModelComboBox = QComboBox(self.page_2)
+        self.ModelComboBox.setObjectName(u"ModelComboBox")
+        self.ModelComboBox.setGeometry(QRect(70, 320, 161, 24))
         self.stackedWidget.addWidget(self.page_2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -134,5 +140,6 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Speed", None));
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Number of elevators", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Algorithm", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Algorithm", None))
     # retranslateUi
 

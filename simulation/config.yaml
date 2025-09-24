@@ -1,9 +1,10 @@
-floors: 6
-max_people_floor: 4
-steps: 1918
+floors: 12
+max_people_floor: 6
+steps: 3171
 visualisation: true
 elevators:
-- max_people: 3
+- max_people: 5
   speed: 5
   starting_floor: 0
 algorithm: nearest_car
+model: null

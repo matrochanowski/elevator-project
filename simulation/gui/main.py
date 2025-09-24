@@ -19,6 +19,7 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
         self.settingsButton.clicked.connect(self.show_settings)
         self.MenuButton.clicked.connect(self.show_main)
         self.SaveButton.clicked.connect(self.save_settings)
+        self.AlgorithmComboBox.currentIndexChanged.connect(self.on_algorithm_changed)
 
         self.ElevatorsSpinBox.valueChanged.connect(self.on_num_elevators_changed)
 
@@ -46,6 +47,10 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
         if index != -1:
             self.AlgorithmComboBox.setCurrentIndex(index)
 
+        index = self.ModelComboBox.findData(config.model)
+        if index != -1:
+            self.ModelComboBox.setCurrentIndex(index)
+
         # Windy
         num_elevators = len(config.elevators)
 
@@ -60,6 +65,19 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
                 max_people_spin.setValue(elevator.max_people)
             if speed_spin:
                 speed_spin.setValue(elevator.speed)
+
+    def on_algorithm_changed(self, index):
+        alg = Algorithm(self.AlgorithmComboBox.itemData(index))
+
+        if alg.needs_model:
+            models = alg.list_models()
+            self.ModelComboBox.clear()
+            for model in models:
+                self.ModelComboBox.addItem(model, model)
+            self.ModelComboBox.setEnabled(True)
+        else:
+            self.ModelComboBox.clear()
+            self.ModelComboBox.setEnabled(False)
 
     # --------------------------------------------------
     # Obsługa widoków (StackedWidget)
@@ -113,6 +131,8 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
 
         algorithm = self.AlgorithmComboBox.currentData()
 
+        model = self.ModelComboBox.currentData()
+
         # elevators = [ElevatorConfigSchema(max_people=max_people_elevator, speed=speed, starting_floor=0)]
 
         elevators = []
@@ -130,7 +150,8 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
                                      max_people_floor=max_people_floor,
                                      visualisation=visualisation,
                                      elevators=elevators,
-                                     algorithm=algorithm)
+                                     algorithm=algorithm,
+                                     model=model)
 
         save_config(configuration)
 

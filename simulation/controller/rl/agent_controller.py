@@ -1,4 +1,4 @@
-from simulation.training.models.q_learning_agent import QLearningAgent
+from simulation.training.agents.q_learning_agent import QLearningAgent
 from simulation.core.elevator_system import ElevatorSystem
 
 
