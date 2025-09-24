@@ -1,6 +1,9 @@
 from simulation import config
+from simulation.algorithms_enums import Algorithm
 
 from simulation.controller.classical.nearest_car_policy import nearest_car_policy
+
+from simulation.controller.rl.use_agent import AgentController
 
 from simulation.core.elevator_system import ElevatorSystem
 from simulation.core.elevator import Elevator
@@ -9,9 +12,14 @@ from simulation.engine.step_operator import operator
 
 from simulation.visualisation.renderer import Renderer
 
-ALGORITHM = nearest_car_policy
+# ALGORITHM = nearest_car_policy
+# agent = AgentController("q_agent.pkl")
+# ALGORITHM = agent.use_agent
+
 
 cfg = config.load_config()
+
+ALGORITHM = cfg.algorithm.get_controller()
 
 
 def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, renderer):

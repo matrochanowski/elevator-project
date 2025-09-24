@@ -6,6 +6,8 @@ from ui_config import Ui_MainWindow
 from simulation.schema import ConfigSchema, ElevatorConfigSchema
 from simulation.config import save_config, load_config
 
+from simulation.algorithms_enums import Algorithm
+
 
 class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -27,6 +29,9 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
         # Wczytaj początkową liczbę wind
         self.on_num_elevators_changed(self.ElevatorsSpinBox.value())
 
+        for alg in Algorithm:
+            self.AlgorithmComboBox.addItem(alg.pretty, userData=alg)
+
         self.load_settings()
 
     def load_settings(self):
@@ -37,9 +42,13 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
         self.StepsHorizontalSlider.setValue(config.steps)
         self.MaxPeopleFloorSpinBox.setValue(config.max_people_floor)
         self.VisualisationRadioButton.setChecked(config.visualisation)
+        index = self.AlgorithmComboBox.findData(config.algorithm)
+        if index != -1:
+            self.AlgorithmComboBox.setCurrentIndex(index)
 
         # Windy
         num_elevators = len(config.elevators)
+
         self.ElevatorsSpinBox.setValue(num_elevators)  # ustawia też tabelę
         self.on_num_elevators_changed(num_elevators)  # żeby stworzyć spinboxy
 
@@ -102,6 +111,8 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
 
         visualisation = self.VisualisationRadioButton.isChecked()
 
+        algorithm = self.AlgorithmComboBox.currentData()
+
         # elevators = [ElevatorConfigSchema(max_people=max_people_elevator, speed=speed, starting_floor=0)]
 
         elevators = []
@@ -118,7 +129,8 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
                                      steps=steps,
                                      max_people_floor=max_people_floor,
                                      visualisation=visualisation,
-                                     elevators=elevators)
+                                     elevators=elevators,
+                                     algorithm=algorithm)
 
         save_config(configuration)
 

@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import List
 
+from simulation.algorithms_enums import Algorithm
+
 
 class ElevatorConfigSchema(BaseModel):
     max_people: int
@@ -14,3 +16,4 @@ class ConfigSchema(BaseModel):
     steps: int
     visualisation: bool
     elevators: List[ElevatorConfigSchema]
+    algorithm: Algorithm
