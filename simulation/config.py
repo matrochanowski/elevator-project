@@ -21,4 +21,4 @@ def load_config() -> ConfigSchema:
 
 def save_config(configuration: ConfigSchema):
     with open(CONFIG_PATH, "w", encoding="utf-8") as f:
-        yaml.safe_dump(configuration.model_dump(), f, sort_keys=False)
+        yaml.safe_dump(configuration.model_dump(mode='json'), f, sort_keys=False)

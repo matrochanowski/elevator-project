@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QMainWindow,
-    QMenuBar, QPushButton, QRadioButton, QSizePolicy,
-    QSlider, QSpinBox, QStackedWidget, QStatusBar,
-    QTableWidget, QTableWidgetItem, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QHeaderView, QLabel,
+    QMainWindow, QMenuBar, QPushButton, QRadioButton,
+    QSizePolicy, QSlider, QSpinBox, QStackedWidget,
+    QStatusBar, QTableWidget, QTableWidgetItem, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -43,10 +43,10 @@ class Ui_MainWindow(object):
         self.page_2.setObjectName(u"page_2")
         self.SaveButton = QPushButton(self.page_2)
         self.SaveButton.setObjectName(u"SaveButton")
-        self.SaveButton.setGeometry(QRect(470, 370, 101, 41))
+        self.SaveButton.setGeometry(QRect(470, 440, 101, 41))
         self.MenuButton = QPushButton(self.page_2)
         self.MenuButton.setObjectName(u"MenuButton")
-        self.MenuButton.setGeometry(QRect(210, 370, 101, 41))
+        self.MenuButton.setGeometry(QRect(210, 440, 101, 41))
         self.FloorsSpinBox = QSpinBox(self.page_2)
         self.FloorsSpinBox.setObjectName(u"FloorsSpinBox")
         self.FloorsSpinBox.setGeometry(QRect(70, 50, 81, 31))
@@ -94,6 +94,12 @@ class Ui_MainWindow(object):
         self.label_4 = QLabel(self.page_2)
         self.label_4.setObjectName(u"label_4")
         self.label_4.setGeometry(QRect(370, 30, 121, 16))
+        self.AlgorithmComboBox = QComboBox(self.page_2)
+        self.AlgorithmComboBox.setObjectName(u"AlgorithmComboBox")
+        self.AlgorithmComboBox.setGeometry(QRect(70, 270, 161, 24))
+        self.label_5 = QLabel(self.page_2)
+        self.label_5.setObjectName(u"label_5")
+        self.label_5.setGeometry(QRect(70, 250, 221, 16))
         self.stackedWidget.addWidget(self.page_2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -127,5 +133,6 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem1 = self.ElevatorTable.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Speed", None));
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Number of elevators", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Algorithm", None))
     # retranslateUi
 
