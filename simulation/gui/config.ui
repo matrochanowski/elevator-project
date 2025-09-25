@@ -262,7 +262,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Algorithm</string>
+       <string>AlgorithmEnum</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_6">

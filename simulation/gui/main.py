@@ -6,7 +6,7 @@ from ui_config import Ui_MainWindow
 from simulation.schema import ConfigSchema, ElevatorConfigSchema
 from simulation.config import save_config, load_config
 
-from simulation.algorithms_enums import Algorithm
+from simulation.enums import AlgorithmEnum
 
 
 class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
@@ -30,7 +30,7 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
         # Wczytaj początkową liczbę wind
         self.on_num_elevators_changed(self.ElevatorsSpinBox.value())
 
-        for alg in Algorithm:
+        for alg in AlgorithmEnum:
             self.AlgorithmComboBox.addItem(alg.pretty, userData=alg)
 
         self.load_settings()
@@ -67,7 +67,7 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
                 speed_spin.setValue(elevator.speed)
 
     def on_algorithm_changed(self, index):
-        alg = Algorithm(self.AlgorithmComboBox.itemData(index))
+        alg = AlgorithmEnum(self.AlgorithmComboBox.itemData(index))
 
         if alg.needs_model:
             models = alg.list_models()

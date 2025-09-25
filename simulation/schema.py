@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import List
 
-from simulation.algorithms_enums import Algorithm
+from simulation.enums import AlgorithmEnum
 
 
 class ElevatorConfigSchema(BaseModel):
@@ -16,5 +16,5 @@ class ConfigSchema(BaseModel):
     steps: int
     visualisation: bool
     elevators: List[ElevatorConfigSchema]
-    algorithm: Algorithm
+    algorithm: AlgorithmEnum
     model: str | None = None

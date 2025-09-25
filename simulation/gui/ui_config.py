@@ -140,6 +140,6 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Speed", None));
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Number of elevators", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Algorithm", None))
-        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Algorithm", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Model", None))
     # retranslateUi
 

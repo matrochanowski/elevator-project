@@ -29,19 +29,15 @@ def generate_passengers(max_floor, max_people_floor, people_array):
 
 def visiting_floor(floor_int, elevator: Elevator, elevator_system: ElevatorSystem):
     """
-    Wykonaj akcje związane z odwiedzinami piętra
-    :param floor_int: Aktualne piętro
-    :param elevator: Obiekt z klasy Elevator
-    :param elevator_system: Obiekt klasy ElevatorSystem
+    Execute actions when stopping at a floor
+    :param floor_int: Current floor
+    :param elevator: Elevator class object
+    :param elevator_system: ElevatorSystem class object
     :return:
     """
-    (people_array,
-     passengers_at_dest,
-                 speed) = (elevator_system.people_array,
-                           elevator_system.passengers_at_dest,
-                           elevator.speed)
+    people_array, passengers_at_dest = elevator_system.people_array, elevator_system.passengers_at_dest
 
-    # wysiadanie pasażerów:
+    # --- PASSENGERS LEAVING ---
     passengers_inside_arr = elevator.people_inside_arr
     passengers_leaving_arr = []
     for passenger_inside in passengers_inside_arr:
@@ -50,7 +46,8 @@ def visiting_floor(floor_int, elevator: Elevator, elevator_system: ElevatorSyste
     elevator.leave(passengers_leaving_arr)
     for passenger_left in passengers_leaving_arr:
         passengers_at_dest.append(passenger_left)
-    # wsiadanie pasażerów
+
+    # --- PASSENGERS GETTING IN ---
     floor = people_array[floor_int]
     sorted_floor = sort_passengers(floor)
     space_left = elevator.how_much_space_left()
@@ -62,13 +59,14 @@ def visiting_floor(floor_int, elevator: Elevator, elevator_system: ElevatorSyste
     if passengers_entering_arr:
         elevator_system.remove_floor_from_requested(floor_int)
 
-
     elevator.enter(passengers_entering_arr)
-    # usuwanie osób z piętra, które wsiadły do windy
+
+    # deleting boarded passengers from the floor
     for passenger in people_array[floor_int]:
         if passenger in passengers_entering_arr:
             people_array[people_array == passenger] = None
-    elevator.delay += speed
+
+    elevator.delay += elevator.time_at_floor
 
 
 def how_much_passengers_floor(floor_int, people_array):
@@ -93,26 +91,6 @@ def sort_passengers(passengers_array):
     """
     # układ: pasażerowie czekający najdłużej od lewej strony wektora
     return sorted(filter(lambda x: x is not None, passengers_array), key=lambda person: person.wait_time, reverse=True)
-
-
-def floor_up(elevator: Elevator):
-    """
-    Funkcja podwyższa obiekt klasy Elevator o piętro
-    :param elevator: Obiekt klasy Elevator
-    :return:
-    """
-    elevator.increase_floor()
-    elevator.delay += elevator.speed
-
-
-def floor_down(elevator: Elevator):
-    """
-    Funkcja obniża obiekt klasy Elevator o piętro
-    :param elevator: Obiekt klasy Elevator
-    :return:
-    """
-    elevator.decrease_floor()
-    elevator.delay += elevator.speed
 
 
 def increase_personal_counter(elevator: Elevator, people_array):

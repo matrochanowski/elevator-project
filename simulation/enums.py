@@ -6,28 +6,28 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
-class Algorithm(str, Enum):
+class AlgorithmEnum(str, Enum):
     Q_LEARNING = "q_learning"
     NEAREST_CAR = "nearest_car"
 
     @property
     def pretty(self) -> str:
         mapping = {
-            Algorithm.Q_LEARNING: "Q-Learning",
-            Algorithm.NEAREST_CAR: "Nearest Car"
+            AlgorithmEnum.Q_LEARNING: "Q-Learning",
+            AlgorithmEnum.NEAREST_CAR: "Nearest Car"
         }
         return mapping[self]
 
     @property
     def needs_model(self) -> bool:
-        return self in {Algorithm.Q_LEARNING}
+        return self in {AlgorithmEnum.Q_LEARNING}
 
     def get_controller(self, model=None):
         match self:
-            case Algorithm.NEAREST_CAR:
+            case AlgorithmEnum.NEAREST_CAR:
                 from simulation.controller.classical.nearest_car_policy import nearest_car_policy
                 return nearest_car_policy
-            case Algorithm.Q_LEARNING:
+            case AlgorithmEnum.Q_LEARNING:
                 from simulation.controller.rl.agent_controller import AgentController
                 model_path = os.path.join(PROJECT_ROOT, "simulation", "controller", "rl", "models", self.value, model)
                 print(model_path)
