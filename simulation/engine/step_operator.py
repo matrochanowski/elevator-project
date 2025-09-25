@@ -16,7 +16,7 @@ def operator(actions, elevator_system: ElevatorSystem):
                 if passenger_outside is not None:
                     passenger_outside.increase_waiting_time()
 
-    def apply_actions_to_elevators(elevator_list, acts):
+    def apply_actions_to_elevators(elevator_list: List[Elevator], acts):
         for i, elv in enumerate(elevator_list):
             action = acts[i]
 
@@ -24,12 +24,16 @@ def operator(actions, elevator_system: ElevatorSystem):
                 continue  # Elevator is currently delayed
 
             if action == "UP":
+                if elv.state != "UP":
+                    elv.current_acc = 0
                 elv.state_up()
-                floor_up(elv)
+                elv.increase_floor()
 
             elif action == "DOWN":
+                if elv.state != "DOWN":
+                    elv.current_acc = 0
                 elv.state_down()
-                floor_down(elv)
+                elv.decrease_floor()
 
             elif action == "STANDING":
                 elv.state_none()
