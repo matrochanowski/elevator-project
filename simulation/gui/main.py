@@ -23,8 +23,8 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
 
         self.ElevatorsSpinBox.valueChanged.connect(self.on_num_elevators_changed)
 
-        self.ElevatorTable.setColumnCount(2)
-        self.ElevatorTable.setHorizontalHeaderLabels(["Max people", "Speed"])
+        self.ElevatorTable.setColumnCount(3)
+        self.ElevatorTable.setHorizontalHeaderLabels(["Max people", "Speed", "Starting floor"])
         self.ElevatorTable.horizontalHeader().setStretchLastSection(True)
 
         # Wczytaj początkową liczbę wind
@@ -60,11 +60,14 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
         for row, elevator in enumerate(config.elevators):
             max_people_spin = self.ElevatorTable.cellWidget(row, 0)
             speed_spin = self.ElevatorTable.cellWidget(row, 1)
+            floor_spin = self.ElevatorTable.cellWidget(row, 2)
 
             if max_people_spin:
                 max_people_spin.setValue(elevator.max_people)
             if speed_spin:
                 speed_spin.setValue(elevator.speed)
+            if floor_spin:
+                floor_spin.setValue(elevator.starting_floor)
 
     def on_algorithm_changed(self, index):
         alg = AlgorithmEnum(self.AlgorithmComboBox.itemData(index))
@@ -119,6 +122,13 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
             spin_delay.setValue(5)
             self.ElevatorTable.setCellWidget(row, 1, spin_delay)
 
+            # Starting floor
+            spin_starting_floor = QSpinBox()
+            spin_starting_floor.setRange(0, load_config().floors)
+            spin_starting_floor.setValue(0)
+            self.ElevatorTable.setCellWidget(row, 2, spin_starting_floor)
+
+
     # --------------------------------------------------
     # Obsługa przycisku Save w ustawieniach
     # --------------------------------------------------
@@ -139,10 +149,11 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
         for row in range(self.ElevatorTable.rowCount()):
             max_people = self.ElevatorTable.cellWidget(row, 0).value()
             speed = self.ElevatorTable.cellWidget(row, 1).value()
+            starting_floor = self.ElevatorTable.cellWidget(row, 2).value()
             elevators.append(ElevatorConfigSchema(
                 max_people=max_people,
                 speed=speed,
-                starting_floor=0
+                starting_floor=starting_floor
             ))
 
         configuration = ConfigSchema(floors=floors,

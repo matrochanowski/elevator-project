@@ -77,14 +77,16 @@ class Ui_MainWindow(object):
         self.VisualisationRadioButton.setObjectName(u"VisualisationRadioButton")
         self.VisualisationRadioButton.setGeometry(QRect(70, 220, 92, 20))
         self.ElevatorTable = QTableWidget(self.page_2)
-        if (self.ElevatorTable.columnCount() < 2):
-            self.ElevatorTable.setColumnCount(2)
+        if (self.ElevatorTable.columnCount() < 3):
+            self.ElevatorTable.setColumnCount(3)
         __qtablewidgetitem = QTableWidgetItem()
         self.ElevatorTable.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
         self.ElevatorTable.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.ElevatorTable.setHorizontalHeaderItem(2, __qtablewidgetitem2)
         self.ElevatorTable.setObjectName(u"ElevatorTable")
-        self.ElevatorTable.setGeometry(QRect(370, 120, 271, 181))
+        self.ElevatorTable.setGeometry(QRect(370, 120, 301, 181))
         self.ElevatorsSpinBox = QSpinBox(self.page_2)
         self.ElevatorsSpinBox.setObjectName(u"ElevatorsSpinBox")
         self.ElevatorsSpinBox.setGeometry(QRect(370, 50, 71, 31))
@@ -138,8 +140,10 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Max people", None));
         ___qtablewidgetitem1 = self.ElevatorTable.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Speed", None));
+        ___qtablewidgetitem2 = self.ElevatorTable.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Max floor", None));
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Number of elevators", None))
-        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Algorithm", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"AlgorithmEnum", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"Model", None))
     # retranslateUi
 
