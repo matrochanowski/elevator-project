@@ -195,7 +195,7 @@
        <rect>
         <x>370</x>
         <y>120</y>
-        <width>271</width>
+        <width>301</width>
         <height>181</height>
        </rect>
       </property>
@@ -207,6 +207,11 @@
       <column>
        <property name="text">
         <string>Speed</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Max floor</string>
        </property>
       </column>
      </widget>
