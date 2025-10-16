@@ -1,4 +1,5 @@
 from simulation.training.agents.q_learning_agent import QLearningAgent
+from simulation.training.scripts.utils import get_state
 from simulation.core.elevator_system import ElevatorSystem
 
 
@@ -11,6 +12,6 @@ class AgentController:
         Używa wytrenowanego agenta do sterowania windą.
         Zwraca listę akcji np. ["UP"].
         """
-        state = self.agent.get_state(elevator_system)
+        state = get_state(elevator_system)
         action_idx = self.agent.choose_action(state)
         return [self.agent.actions[action_idx]]
