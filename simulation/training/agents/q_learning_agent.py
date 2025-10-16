@@ -2,20 +2,16 @@ import random
 import numpy as np
 import pickle
 from collections import defaultdict
+from simulation.core.elevator_system import ElevatorSystem
+
 
 class QLearningAgent:
-    def __init__(self, actions, alpha=0.1, gamma=0.95, epsilon=0.1):
+    def __init__(self, actions, alpha=0.1, gamma=0.95, epsilon=0.5):
         self.q_table = defaultdict(lambda: np.zeros(len(actions)))
         self.actions = actions
         self.alpha = alpha
         self.gamma = gamma
         self.epsilon = epsilon
-
-    def get_state(self, system):
-        elevator = system.elevators[0]  # na początek tylko jedna winda
-        floor = elevator.current_floor
-        requests = tuple(1 if f in system.requested_floors else 0 for f in range(system.max_floor))
-        return (floor, requests)
 
     def choose_action(self, state):
         if random.random() < self.epsilon:
@@ -36,7 +32,7 @@ class QLearningAgent:
     def load(cls, path: str):
         with open(path, "rb") as f:
             q_table_dict, actions, alpha, gamma, epsilon = pickle.load(f)
-        agent = cls(actions, alpha, gamma, epsilon)
+        agent = cls(actions, 0, 0.95, 0)
 
         agent.q_table = defaultdict(lambda: np.zeros(len(actions)), q_table_dict)
         return agent

@@ -7,6 +7,8 @@ from simulation.engine.step_operator import operator
 
 from simulation.visualisation.renderer import Renderer
 
+from simulation.training.scripts.utils import *
+
 # ALGORITHM = nearest_car_policy
 # agent = AgentController("q_agent.pkl")
 # ALGORITHM = agent.use_agent
@@ -40,8 +42,16 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
                     running = False
 
         # --- Simulation Step ---
+        previous_state = get_state(system)
+
         actions = policy(system)
         _, system, _ = operator(actions, system)
+
+        current_state = get_state(system)
+
+        reward = reward_function(decode_state(previous_state, system), decode_state(current_state, system), actions)
+
+        print(reward)
 
         # --- Drawing (tylko w trybie viz) ---
         if visualisation:
