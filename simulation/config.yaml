@@ -7,4 +7,4 @@ elevators:
   speed: 5
   starting_floor: 0
 algorithm: q_learning
-model: q_agent.pkl
+model: q_agent_simple_reward.pkl

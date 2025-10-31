@@ -36,7 +36,7 @@ def train_q_learning(episodes=100, steps=200, agent=QLearningAgent(ACTIONS)):
             reward = reward_function(decode_state(state_before, system), decode_state(state_after, system), actions)
             reward_sum += reward
 
-            if system.elevators[0].delay == 0:
+            if system.elevators[0].delay >= 0:
                 agent.update(state, action_idx, reward, state_after)
 
             state = state_after
@@ -52,13 +52,14 @@ if __name__ == "__main__":
     trained_agent, reward = train_q_learning(episodes=5, steps=1000)
     rewards.append(reward)
 
-    n = 600
+    n = 300
 
     for i in range(n):
         trained_agent, reward = train_q_learning(episodes=5, steps=1000, agent=trained_agent)
         rewards.append(reward)
 
-    trained_agent.save("q_agent.pkl")
+    trained_agent.save("q_agent_simple_reward.pkl")
+    trained_agent.save_to_xlsx("q_matrix1.xlsx")
 
     x = np.linspace(0, n + 1, n + 1)
     y = np.array(rewards)
