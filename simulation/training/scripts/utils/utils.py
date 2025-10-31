@@ -136,12 +136,12 @@ def reward_function(prev_state: ElevatorSystemState,
             higher_targets = [f for f in targets if f > floor]
             if higher_targets:
                 distance = min(higher_targets) - floor
-                reward += 0.25 / distance
+                reward += 0.0 / distance
         elif act == "DOWN":
             lower_targets = [f for f in targets if f < floor]
             if lower_targets:
                 distance = floor - max(lower_targets)
-                reward += 0.25 / distance
+                reward += 0.0 / distance
         # STANDING → brak dodatkowej nagrody
 
     return reward

@@ -2,7 +2,7 @@ import random
 import numpy as np
 import pickle
 from collections import defaultdict
-from simulation.core.elevator_system import ElevatorSystem
+from openpyxl import Workbook
 
 
 class QLearningAgent:
@@ -27,6 +27,19 @@ class QLearningAgent:
     def save(self, path: str):
         with open(path, "wb") as f:
             pickle.dump((dict(self.q_table), self.actions, self.alpha, self.gamma, self.epsilon), f)
+
+    def save_to_xlsx(self, path: str):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Q-Table"
+
+        ws.append(["State"] + [f"Action {a}" for a in self.actions])
+
+        for state, q_values in self.q_table.items():
+            ws.append([str(state)] + list(map(float, q_values)))
+
+        wb.save(path)
+        print(f"Q-table saved to {path}")
 
     @classmethod
     def load(cls, path: str):
