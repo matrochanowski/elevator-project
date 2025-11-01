@@ -7,6 +7,7 @@ from simulation.schema import ConfigSchema, ElevatorConfigSchema
 from simulation.config import save_config, load_config
 
 from simulation.enums import AlgorithmEnum
+from simulation.utils import extract_params_suffix
 
 
 class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
@@ -17,7 +18,11 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
         # Podłączenie przycisków
         self.startButton.clicked.connect(self.start_simulation)
         self.settingsButton.clicked.connect(self.show_settings)
+        self.settingsButton_2.clicked.connect(self.show_settings)
         self.MenuButton.clicked.connect(self.show_main)
+        self.MenuButton_2.clicked.connect(self.show_main)
+        self.TrafficConfigurationButton.clicked.connect(self.show_traffic_conf)
+        self.reinforcementButton.clicked.connect(self.show_reinforcement_panel)
         self.SaveButton.clicked.connect(self.save_settings)
         self.AlgorithmComboBox.currentIndexChanged.connect(self.on_algorithm_changed)
 
@@ -27,8 +32,8 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
         self.ElevatorTable.setHorizontalHeaderLabels(["Max people", "Speed", "Starting floor"])
         self.ElevatorTable.horizontalHeader().setStretchLastSection(True)
 
-        # Wczytaj początkową liczbę wind
         self.on_num_elevators_changed(self.ElevatorsSpinBox.value())
+        self.ModelComboBox.currentIndexChanged.connect(self.on_model_changed)
 
         for alg in AlgorithmEnum:
             self.AlgorithmComboBox.addItem(alg.pretty, userData=alg)
@@ -78,27 +83,49 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
             for model in models:
                 self.ModelComboBox.addItem(model, model)
             self.ModelComboBox.setEnabled(True)
+
+            self.label_7.setHidden(False)
+            self.label_8.setHidden(False)
+            self.label_9.setHidden(False)
+            self.label_10.setHidden(False)
+            self.label_11.setHidden(False)
         else:
             self.ModelComboBox.clear()
             self.ModelComboBox.setEnabled(False)
 
-    # --------------------------------------------------
-    # Obsługa widoków (StackedWidget)
-    # --------------------------------------------------
+            self.label_7.setHidden(True)
+            self.label_8.setHidden(True)
+            self.label_9.setHidden(True)
+            self.label_10.setHidden(True)
+            self.label_11.setHidden(True)
+
+    def on_model_changed(self, index):
+        model_name = self.ModelComboBox.itemData(index)
+        if not model_name:
+            return
+
+        n_elevators, n_floors = extract_params_suffix(model_name)
+
+        self.FloorsSpinBox.setValue(n_floors)
+        self.ElevatorsSpinBox.setValue(n_elevators)
+
+        self.label_10.setText(str(n_floors))
+        self.label_11.setText(str(n_elevators))
+
     def show_settings(self):
-        self.stackedWidget.setCurrentIndex(1)  # Page 2 - ustawienia
+        self.stackedWidget.setCurrentIndex(1)  # Page 2 - settings
 
     def show_main(self):
-        self.stackedWidget.setCurrentIndex(0)  # Page 1 - główny widok
+        self.stackedWidget.setCurrentIndex(0)  # Page 1 - main menu
 
-    # --------------------------------------------------
-    # Start symulacji
-    # --------------------------------------------------
+    def show_traffic_conf(self):
+        self.stackedWidget.setCurrentIndex(2)  # Page 3 - traffic configuration
+
+    def show_reinforcement_panel(self):
+        self.stackedWidget.setCurrentIndex(3)  # Page 4 - reinforcement learning panel
+
     def start_simulation(self):
         try:
-            # Możesz tutaj dodać pobieranie wartości z pól jeśli chcesz je przekazać
-            # floors = self.FloorsSpinBox.value()
-            # steps = self.StepsHorizontalSlider.value()
             subprocess.run(
                 [sys.executable, "../engine/runner.py"],
                 check=True
@@ -128,11 +155,7 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
             spin_starting_floor.setValue(0)
             self.ElevatorTable.setCellWidget(row, 2, spin_starting_floor)
 
-
-    # --------------------------------------------------
-    # Obsługa przycisku Save w ustawieniach
-    # --------------------------------------------------
-    def save_settings(self):
+    def save_settings(self, index):
         floors = self.FloorsSpinBox.value()
         steps = self.StepsHorizontalSlider.value()
         max_people_floor = self.MaxPeopleFloorSpinBox.value()
@@ -142,6 +165,14 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
         algorithm = self.AlgorithmComboBox.currentData()
 
         model = self.ModelComboBox.currentData()
+
+        alg = AlgorithmEnum(self.AlgorithmComboBox.itemData(index))
+        if alg.needs_model:
+            n_elevators_n_floors = extract_params_suffix(model)
+            if n_elevators_n_floors != (self.ElevatorTable.rowCount(), floors):
+                QMessageBox.warning(self, "Wrong configuration!", "Number of elevators and number of floors "
+                                                                  "doesn't match the model's properties")
+                return
 
         # elevators = [ElevatorConfigSchema(max_people=max_people_elevator, speed=speed, starting_floor=0)]
 
@@ -166,9 +197,8 @@ class ElevatorSimConfig(QMainWindow, Ui_MainWindow):
 
         save_config(configuration)
 
-        # Tutaj możesz wstawić logikę zapisu lub przekazania ustawień
         print(f"Zapisano ustawienia: floors={floors}, steps={steps}")
-        QMessageBox.information(self, "Zapisano", "Ustawienia zostały zapisane.")
+        QMessageBox.information(self, "Saved", "Settings saved successfully.")
 
 
 if __name__ == "__main__":

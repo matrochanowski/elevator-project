@@ -3,6 +3,12 @@ import numpy as np
 import pickle
 from collections import defaultdict
 from openpyxl import Workbook
+from pathlib import Path
+import os
+from simulation import config
+
+TRAINING_ROOT = Path(__file__).resolve().parents[1]
+cfg = config.load_config()
 
 
 class QLearningAgent:
@@ -23,9 +29,16 @@ class QLearningAgent:
         old_value = self.q_table[state][action]
         self.q_table[state][action] = old_value + self.alpha * (reward + self.gamma * best_next - old_value)
 
-    # --- NEW: saving & loading ---
-    def save(self, path: str):
-        with open(path, "wb") as f:
+    def save(self, filename: str):
+        """
+        Saves the current parameters into a pkl file in training/models directory.
+        your_name_{n_elevators}_{n_floors}.pkl
+        :param filename: Name of the model. Don't add extension here.
+        :return:
+        """
+        suffix = "_" + str(len(cfg.elevators)) + "_" + str(cfg.floors)
+        whole_path = os.path.join(TRAINING_ROOT, "models", filename + suffix + ".pkl")
+        with open(whole_path, "wb") as f:
             pickle.dump((dict(self.q_table), self.actions, self.alpha, self.gamma, self.epsilon), f)
 
     def save_to_xlsx(self, path: str):

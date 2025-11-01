@@ -1,4 +1,4 @@
-floors: 3
+floors: 7
 max_people_floor: 12
 steps: 2120
 visualisation: true
@@ -7,4 +7,4 @@ elevators:
   speed: 5
   starting_floor: 0
 algorithm: q_learning
-model: q_agent_simple_reward.pkl
+model: q_agent_simple_reward_1_7.pkl
