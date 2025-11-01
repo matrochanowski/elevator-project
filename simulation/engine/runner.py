@@ -10,7 +10,7 @@ from simulation.visualisation.renderer import Renderer
 from simulation.training.scripts.utils import *
 
 # ALGORITHM = nearest_car_policy
-# agent = AgentController("q_agent_simple_reward.pkl")
+# agent = AgentController("q_agent_simple_reward_1_3.pkl")
 # ALGORITHM = agent.use_agent
 
 

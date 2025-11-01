@@ -17,20 +17,20 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>40</x>
       <y>30</y>
       <width>721</width>
       <height>491</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="page">
      <widget class="QPushButton" name="startButton">
       <property name="geometry">
        <rect>
-        <x>280</x>
+        <x>340</x>
         <y>350</y>
         <width>91</width>
         <height>41</height>
@@ -43,9 +43,9 @@
      <widget class="QPushButton" name="settingsButton">
       <property name="geometry">
        <rect>
-        <x>520</x>
-        <y>350</y>
-        <width>101</width>
+        <x>510</x>
+        <y>290</y>
+        <width>141</width>
         <height>41</height>
        </rect>
       </property>
@@ -53,13 +53,26 @@
        <string>Settings</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="reinforcementButton">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>240</y>
+        <width>141</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Reinforcement Learning</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_2">
      <widget class="QPushButton" name="SaveButton">
       <property name="geometry">
        <rect>
-        <x>470</x>
-        <y>440</y>
+        <x>370</x>
+        <y>430</y>
         <width>101</width>
         <height>41</height>
        </rect>
@@ -71,8 +84,8 @@
      <widget class="QPushButton" name="MenuButton">
       <property name="geometry">
        <rect>
-        <x>210</x>
-        <y>440</y>
+        <x>260</x>
+        <y>430</y>
         <width>101</width>
         <height>41</height>
        </rect>
@@ -195,7 +208,7 @@
        <rect>
         <x>370</x>
         <y>120</y>
-        <width>301</width>
+        <width>311</width>
         <height>181</height>
        </rect>
       </property>
@@ -291,6 +304,156 @@
         <width>161</width>
         <height>24</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>350</y>
+        <width>221</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Model parameters:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>370</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Floors: </string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>370</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Elevators:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>370</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>–</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>370</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>–</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="TrafficConfigurationButton">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>320</y>
+        <width>131</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Traffic Configuration</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page_3">
+     <widget class="QLabel" name="label_12">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>20</y>
+        <width>191</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LayoutDirection::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>Traffic Configuration Panel</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="MenuButton_2">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>400</y>
+        <width>101</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Menu</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page_4">
+     <widget class="QLabel" name="label_13">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>30</y>
+        <width>171</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LayoutDirection::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>Reinforcement Learning</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="settingsButton_2">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>400</y>
+        <width>141</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Settings</string>
       </property>
      </widget>
     </widget>

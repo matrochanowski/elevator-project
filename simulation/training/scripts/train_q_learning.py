@@ -52,13 +52,13 @@ if __name__ == "__main__":
     trained_agent, reward = train_q_learning(episodes=5, steps=1000)
     rewards.append(reward)
 
-    n = 300
+    n = 500
 
     for i in range(n):
-        trained_agent, reward = train_q_learning(episodes=5, steps=1000, agent=trained_agent)
+        trained_agent, reward = train_q_learning(episodes=10, steps=1000, agent=trained_agent)
         rewards.append(reward)
 
-    trained_agent.save("q_agent_simple_reward.pkl")
+    trained_agent.save("q_agent_simple_reward")
     trained_agent.save_to_xlsx("q_matrix1.xlsx")
 
     x = np.linspace(0, n + 1, n + 1)
