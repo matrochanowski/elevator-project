@@ -55,10 +55,16 @@ class QLearningAgent:
         print(f"Q-table saved to {path}")
 
     @classmethod
-    def load(cls, path: str):
+    def load(cls, path: str, alpha=None, gamma=None, epsilon=None):
         with open(path, "rb") as f:
-            q_table_dict, actions, alpha, gamma, epsilon = pickle.load(f)
-        agent = cls(actions, 0, 0.95, 0)
+            q_table_dict, actions, alpha_load, gamma_load, epsilon_load = pickle.load(f)
+        if alpha is None:
+            alpha = alpha_load
+        if gamma is None:
+            gamma = gamma_load
+        if epsilon is None:
+            epsilon = epsilon_load
+        agent = cls(actions, alpha, gamma, epsilon)
 
         agent.q_table = defaultdict(lambda: np.zeros(len(actions)), q_table_dict)
         return agent
