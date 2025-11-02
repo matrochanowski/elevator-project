@@ -4,6 +4,7 @@ from simulation.core.elevator import ElevatorSystem
 from simulation.engine.step_operator import operator
 from simulation.training.agents.q_learning_agent import QLearningAgent
 from simulation.training.scripts.utils import *
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,6 +16,7 @@ ACTIONS = ["UP", "DOWN", "STANDING"]
 
 def train_q_learning(episodes=100, steps=200, agent=QLearningAgent(ACTIONS)):
     whole_reward = 0
+    flag = False
     for ep in range(episodes):
         system = ElevatorSystem(cfg.floors, 50, cfg.max_people_floor)
         system.elevators = [Elevator(max_people_inside=elevator.max_people,
@@ -26,6 +28,11 @@ def train_q_learning(episodes=100, steps=200, agent=QLearningAgent(ACTIONS)):
         reward_sum = 0
 
         for step in range(steps):
+            if system.elevators[0].delay == 0:
+                flag = True
+            else:
+                flag = False
+
             action_idx = agent.choose_action(state)
             actions = [ACTIONS[action_idx]]
 
@@ -36,7 +43,15 @@ def train_q_learning(episodes=100, steps=200, agent=QLearningAgent(ACTIONS)):
             reward = reward_function(decode_state(state_before, system), decode_state(state_after, system), actions)
             reward_sum += reward
 
-            if system.elevators[0].delay >= 0:
+
+            if flag:
+                # print("-!-" * 20)
+                # print(f"STAN PRZED: {state_before}")
+                # print(f"AKCJA: {actions}")
+                # print(f"STAN PO: {state_after}")
+                # print(f"NAGRODA: {reward}")
+                # print("Czy stan się zmienił? ", state_before != state_after)
+                # print("-!-" * 20)
                 agent.update(state, action_idx, reward, state_after)
 
             state = state_after
@@ -49,17 +64,18 @@ def train_q_learning(episodes=100, steps=200, agent=QLearningAgent(ACTIONS)):
 
 if __name__ == "__main__":
     rewards = []
-    trained_agent, reward = train_q_learning(episodes=5, steps=1000)
+    agt = QLearningAgent(ACTIONS, gamma=0.96, alpha=0.5)
+    trained_agent, reward = train_q_learning(episodes=5, steps=1000, agent=agt)
     rewards.append(reward)
 
-    n = 500
+    n = 200
 
     for i in range(n):
         trained_agent, reward = train_q_learning(episodes=10, steps=1000, agent=trained_agent)
         rewards.append(reward)
 
-    trained_agent.save("q_agent_simple_reward")
-    trained_agent.save_to_xlsx("q_matrix1.xlsx")
+    trained_agent.save("q_complex_reward")
+    # trained_agent.save_to_xlsx("q_matrix1.xlsx")
 
     x = np.linspace(0, n + 1, n + 1)
     y = np.array(rewards)
