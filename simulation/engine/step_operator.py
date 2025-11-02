@@ -38,10 +38,10 @@ def operator(actions, elevator_system: ElevatorSystem):
             elif action == "STANDING":
                 elv.state_none()
 
-    # --- wykonanie akcji ---
+    # --- taking an action ---
     apply_actions_to_elevators(elevator_system.elevators, actions)
 
-    # --- sprawdź drzwi i obsłuż pasażerów dla każdej windy ---
+    # --- check doors and serve passengers ---
     for lift in elevator_system.elevators:
         if lift.state == "STANDING" and lift.delay == 0:
             if lift.decide_if_stop(elevator_system):
@@ -51,7 +51,7 @@ def operator(actions, elevator_system: ElevatorSystem):
                     elevator_system
                 )
 
-    # --- obsłuż spawn pasażerów ---
+    # --- serve passengers spawning ---
     new_floors_arr = []
     if random.randint(0, elevator_system.spawn_chance) == 1:
         new_floors_arr = generate_passengers(
@@ -63,21 +63,21 @@ def operator(actions, elevator_system: ElevatorSystem):
         if new_floor not in elevator_system.requested_floors:
             elevator_system.add_floor_to_requested_queue(new_floor)
 
-    # --- aktualizacja ludzi w windach ---
+    # --- update people in elevators ---
     for lift in elevator_system.elevators:
         lift.update_people_inside()
 
-    # --- zwiększanie czasu oczekiwania ---
+    # --- increase waiting time ---
     for lift in elevator_system.elevators:
         increase_personal_counter_elevator(lift)
     increase_personal_counter_floors()
 
-    # --- zmniejszanie delay ---
+    # --- decrease delay ---
     for lift in elevator_system.elevators:
         if lift.delay > 0:
             lift.delay -= 1
 
-    # --- wektor stanu systemu ---
+    # --- state vector (deprecated) ---
     vector_state = get_system_state(elevator_system.elevators, elevator_system)
 
     return elevator_system.elevators, elevator_system, vector_state

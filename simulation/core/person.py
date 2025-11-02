@@ -28,8 +28,8 @@ class Person:
 
     def increase_waiting_time(self, step=1):
         """
-        Zwiększ czas czekania osoby
-        :param step: Ile czasu
+        Increase time of a person waiting
+        :param step: How many steps
         :return:
         """
         self.wait_time += step

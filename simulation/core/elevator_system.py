@@ -7,10 +7,10 @@ class ElevatorSystem:
         self.spawn_chance = spawn_chance
         self.max_people_floor = max_people_per_floor
 
-        self.elevators = []  # lista obiektów Elevator
+        self.elevators = []  # list of elevator objects
         self.people_array = np.full((max_floor + 1, self.max_people_floor), None, dtype=object)
-        self.passengers_at_dest = []  # lista pasażerów, którzy dotarli do celu
-        self.requested_floors = []  # piętra "wezwane" do obsługi
+        self.passengers_at_dest = []  # list of passengers who got to their destination
+        self.requested_floors = []  # floors requested from outside
 
     def __str__(self):
         info = [f"ElevatorSystem status:", f"Max floor: {self.max_floor}", f"Requested floors: {self.requested_floors}",

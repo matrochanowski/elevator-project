@@ -9,8 +9,8 @@ class AgentController:
 
     def use_agent(self, elevator_system: ElevatorSystem):
         """
-        Używa wytrenowanego agenta do sterowania windą.
-        Zwraca listę akcji np. ["UP"].
+        Uses trained agent to operate an elevator
+        Returns a list of action e.g. ["UP"].
         """
         state = get_state(elevator_system)
         action_idx = self.agent.choose_action(state)

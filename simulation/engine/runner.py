@@ -35,7 +35,7 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
     step_count = 0
 
     while running and step_count < steps:
-        # --- Event Handling (tylko w trybie viz) ---
+        # --- Event Handling ---
         if visualisation:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -53,7 +53,7 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
 
         print(reward)
 
-        # --- Drawing (tylko w trybie viz) ---
+        # --- Drawing only in visualisation mode ---
         if visualisation:
             screen.fill(renderer.BLACK)
             renderer.draw(screen, system)

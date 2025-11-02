@@ -3,16 +3,16 @@ from simulation.core.elevator_system import ElevatorSystem
 
 def nearest_car_policy(elevator_system: ElevatorSystem):
     """
-    Naiwny algorytm 'Nearest Car' (ulepszony):
-    - Jeśli winda ma pasażerów, obsługuje ich docelowe piętra.
-    - Jeśli winda jest pusta, jedzie do najbliższych wezwań (może mieć wiele przypisanych).
-    - Rozstrzyga remisy, wybierając windę stojącą albo z mniejszym obciążeniem.
-    Zwraca listę akcji: ["UP", "DOWN", "STANDING", ...].
+    Naive 'Nearest Car' Algorithm:
+    - If the elevator has passengers, it serves their destination floors.
+    - If the elevator is empty, it goes to the nearest calls (it can have multiple calls).
+    - Breaks ties by choosing the standing elevator or the one with the least load.
+
+    Returns a list of actions: ["UP", "DOWN", "STANDING", ...].
     """
 
     actions = ["STANDING"] * len(elevator_system.elevators)
 
-    # --- krok 1: przypisanie wezwań do wind ---
     assignments = {i: [] for i in range(len(elevator_system.elevators))}
 
     for floor in elevator_system.requested_floors:
@@ -20,15 +20,12 @@ def nearest_car_policy(elevator_system: ElevatorSystem):
         nearest_dist = float("inf")
 
         for i, elevator in enumerate(elevator_system.elevators):
-            # jeśli winda ma pasażerów → nadal można jej przypisać wezwanie
-            # (ale obsłuży je dopiero po wysadzeniu pasażerów)
             dist = abs(elevator.current_floor - floor)
 
             if dist < nearest_dist:
                 nearest_dist = dist
                 nearest_idx = i
             elif dist == nearest_dist:
-                # rozstrzyganie remisu: preferuj STANDING lub mniej pasażerów
                 if elevator.state == "STANDING":
                     nearest_idx = i
                 elif (nearest_idx is not None and
@@ -38,16 +35,13 @@ def nearest_car_policy(elevator_system: ElevatorSystem):
         if nearest_idx is not None:
             assignments[nearest_idx].append(floor)
 
-    # --- krok 2: decyzja dla każdej windy ---
     for i, elevator in enumerate(elevator_system.elevators):
 
         target = None
 
-        # priorytet: najpierw pasażerowie w środku
         if elevator.chosen_floors:
             target = min(elevator.chosen_floors, key=lambda f: abs(f - elevator.current_floor))
 
-        # jeśli brak pasażerów → bierz wezwanie z kolejki przypisań
         elif assignments[i]:
             target = min(assignments[i], key=lambda f: abs(f - elevator.current_floor))
 
@@ -58,6 +52,6 @@ def nearest_car_policy(elevator_system: ElevatorSystem):
         elif target < elevator.current_floor:
             actions[i] = "DOWN"
         else:
-            actions[i] = "STANDING"  # na piętrze → obsługa
+            actions[i] = "STANDING"
 
     return actions

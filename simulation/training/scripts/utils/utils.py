@@ -16,21 +16,17 @@ def get_state(system: ElevatorSystem):
     """
     state = []
 
-    # --- część dla każdej windy ---
     for elevator in system.elevators:
-        # Pozycja windy (one-hot)
         floors = np.zeros(system.max_floor + 1, dtype=int)
         floors[elevator.current_floor] = 1
         state.extend(floors.tolist())
 
-        # Wybrane piętra w środku windy (binarne)
         chosen = np.zeros(system.max_floor + 1, dtype=int)
         for f in elevator.chosen_floors:
             if 0 <= f <= system.max_floor:
                 chosen[f] = 1
         state.extend(chosen.tolist())
 
-        # Kierunek windy (-1, 0, 1)
         if elevator.state == "UP":
             direction = 1
         elif elevator.state == "DOWN":
@@ -39,7 +35,6 @@ def get_state(system: ElevatorSystem):
             direction = 0
         state.append(direction)
 
-    # --- część globalna: przyciski wezwań z zewnątrz ---
     external_calls = np.zeros(system.max_floor + 1, dtype=int)
     for f in system.requested_floors:
         if 0 <= f <= system.max_floor:
@@ -63,17 +58,17 @@ def decode_state(state, system: ElevatorSystem) -> ElevatorSystemState:
     elevators = []
 
     for _ in range(n_elevators):
-        # Pozycja windy
+        # Elevator position
         position = state[idx: idx + n_floors]
         current_floor = int(np.argmax(position))
         idx += n_floors
 
-        # Wybrane piętra
+        # Chosen floors
         chosen = state[idx: idx + n_floors]
         chosen_floors = [i for i, v in enumerate(chosen) if v == 1]
         idx += n_floors
 
-        # Kierunek
+        # Directions
         direction = int(state[idx])
         idx += 1
 
@@ -83,7 +78,7 @@ def decode_state(state, system: ElevatorSystem) -> ElevatorSystemState:
             direction=direction
         ))
 
-    # Zewnętrzne wezwania
+    # Outside calls
     external_calls = state[idx: idx + n_floors]
     external_floors = [i for i, v in enumerate(external_calls) if v == 1]
 

@@ -95,7 +95,7 @@ def sort_passengers(passengers_array):
 
 def increase_personal_counter(elevator: Elevator, people_array):
     """
-    Funkcja zwiększa czas oczekiwania wszystkich pasażerów biorących udział w symulacji
+    Function increases step counter of each object participating in the simulation
     :param elevator: Obiekt klasy Elevator
     :param people_array:
     :return:
