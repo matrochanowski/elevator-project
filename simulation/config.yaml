@@ -1,10 +1,24 @@
-floors: 7
+floors: 3
 max_people_floor: 12
-steps: 2120
+steps: 3211
 visualisation: true
 elevators:
 - max_people: 5
   speed: 5
   starting_floor: 0
-algorithm: q_learning
-model: q_agent_simple_reward_1_7.pkl
+- max_people: 5
+  speed: 5
+  starting_floor: 0
+algorithm: nearest_car
+model: null
+traffic:
+  generator_type: up-peak
+  intensity: 0.15
+  seed: 5
+  up_peak_params:
+    arrival_floor: 0
+    destination_distribution: null
+  down_peak_params: null
+  interfloor_params: null
+  mixed_peak_params: null
+  uniform_params: null

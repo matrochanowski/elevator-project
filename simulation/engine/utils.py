@@ -1,30 +1,10 @@
-from simulation.core.person import Person
 from simulation.core.elevator import Elevator
 from simulation.core.elevator_system import ElevatorSystem
-import copy
 import numpy as np
 from typing import List, Set, Tuple
-
-
-def generate_passengers(max_floor, max_people_floor, people_array):
-    """
-        Funkcja generuje pasażerów i dodaje ich do macierzy reprezentującej piętra
-        :param max_floor: Pierwsza liczba całkowita.
-        :param max_people_floor: Maksymalna ilość osób w piętrze
-        :param people_array: Macierz numpy o wymiarach liczba piętra x maksymalna ilość osób w piętrze
-        :return: Macierz numpy z wcześniejszymi i dodanymi pasażerami
-        """
-    amount = 1  # 1 pasażer
-    new_floors_arr = []
-    for person in range(amount):
-        person = Person(max_floor)
-        if person.starting_floor not in new_floors_arr:
-            new_floors_arr.append(person.starting_floor)
-        for i in range(max_people_floor):
-            if people_array[person.starting_floor, i] is None:
-                people_array[person.starting_floor, i] = copy.deepcopy(person)
-                break
-    return new_floors_arr
+from datetime import datetime
+import os
+import pandas as pd
 
 
 def visiting_floor(floor_int, elevator: Elevator, elevator_system: ElevatorSystem):
@@ -249,3 +229,41 @@ def int_to_action(action_int):
     lift2_state = lift_states_map[lift2_state_index]
 
     return (lift1_state, lift2_state)
+
+
+simulation_log = []
+run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+
+def log_simulation_step(step_idx: int, elevator_system):
+    """Saves one simulation step to global list simulation_log"""
+    global simulation_log
+
+    for elv_id, elv in enumerate(elevator_system.elevators):
+        record = {
+            "step": step_idx,
+            "elevator_id": elv_id,
+            "floor": elv.current_floor,
+            "state": elv.state,
+            "delay": elv.delay,
+            "num_inside": len(elv.people_inside_arr),
+            "requested_floors": len(elevator_system.requested_floors),
+            "waiting_total": sum(len(f) for f in elevator_system.people_array),
+        }
+        simulation_log.append(record)
+
+
+def save_simulation_log(output_dir="logs", filename_prefix="run"):
+    """Saves logs to Parquet format"""
+    global simulation_log, run_timestamp
+
+    if not simulation_log:
+        return
+
+    os.makedirs(output_dir, exist_ok=True)
+    filename = os.path.join(output_dir, f"{filename_prefix}_{run_timestamp}.parquet")
+
+    df = pd.DataFrame(simulation_log)
+    df.to_parquet(filename, index=False, compression="snappy")
+
+    print(f"[LOG] Saved {len(df)} lines to file: {filename}")

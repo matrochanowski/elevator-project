@@ -1,11 +1,10 @@
 from simulation.engine.utils import *
+from simulation.engine.traffic_generator import *
 
 from simulation.core.elevator_system import ElevatorSystem
 
-import random
 
-
-def operator(actions, elevator_system: ElevatorSystem):
+def operator(actions, elevator_system: ElevatorSystem, step: int):
     def increase_personal_counter_elevator(elevator):
         for passenger_inside in elevator.people_inside_arr:
             passenger_inside.increase_waiting_time()
@@ -52,13 +51,7 @@ def operator(actions, elevator_system: ElevatorSystem):
                 )
 
     # --- serve passengers spawning ---
-    new_floors_arr = []
-    if random.randint(0, elevator_system.spawn_chance) == 1:
-        new_floors_arr = generate_passengers(
-            elevator_system.max_floor,
-            elevator_system.max_people_floor,
-            elevator_system.people_array,
-        )
+    new_floors_arr = generate_passengers(elevator_system, step)
     for new_floor in new_floors_arr:
         if new_floor not in elevator_system.requested_floors:
             elevator_system.add_floor_to_requested_queue(new_floor)

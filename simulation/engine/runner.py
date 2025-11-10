@@ -4,6 +4,7 @@ from simulation.core.elevator_system import ElevatorSystem
 from simulation.core.elevator import Elevator
 
 from simulation.engine.step_operator import operator
+from simulation.engine.logger import SimulationLogger
 
 from simulation.visualisation.renderer import Renderer
 
@@ -33,6 +34,7 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
 
     running = True
     step_count = 0
+    logger = SimulationLogger()
 
     while running and step_count < steps:
         # --- Event Handling ---
@@ -45,13 +47,14 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
         previous_state = get_state(system)
 
         actions = policy(system)
-        _, system, _ = operator(actions, system)
+        _, system, _ = operator(actions, system, step_count)
+        logger.log_step(step_count, system)
 
         current_state = get_state(system)
 
         reward = reward_function(decode_state(previous_state, system), decode_state(current_state, system), actions)
 
-        print(reward)
+        # print(reward)
 
         # --- Drawing only in visualisation mode ---
         if visualisation:
@@ -64,6 +67,8 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
 
     if visualisation:
         pygame.quit()
+
+    logger.finalize()
 
     return system
 

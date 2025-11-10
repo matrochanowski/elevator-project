@@ -1,7 +1,7 @@
 import random
 import numpy as np
 import pickle
-from collections import defaultdict
+from collections import defaultdict, deque
 from openpyxl import Workbook
 from pathlib import Path
 import os
@@ -12,12 +12,14 @@ cfg = config.load_config()
 
 
 class QLearningAgent:
-    def __init__(self, actions, alpha=0.1, gamma=0.95, epsilon=0.5):
+    def __init__(self, actions, alpha=0.1, gamma=0.95, epsilon=0.5, buffer_size=0):
         self.q_table = defaultdict(lambda: np.zeros(len(actions)))
         self.actions = actions
         self.alpha = alpha
         self.gamma = gamma
         self.epsilon = epsilon
+        self.buffer_size = buffer_size
+        self.buffer = deque(maxlen=buffer_size)
 
     def choose_action(self, state):
         if random.random() < self.epsilon:
@@ -25,6 +27,24 @@ class QLearningAgent:
         return int(np.argmax(self.q_table[state]))
 
     def update(self, state, action, reward, next_state):
+        match self.buffer_size:
+            case 0:
+                return self.update_no_buffer(state, action, reward, next_state)
+            case _:
+                return self.update_with_buffer(state, action, reward, next_state)
+
+
+    def update_with_buffer(self, state, action, reward, next_state):
+        self.buffer.append((state, action, reward, next_state))
+
+        if len(self.buffer) >= self.buffer_size:
+            while len(self.buffer) > 0:
+                state, action, reward, next_state = self.buffer.pop()
+                best_next = np.max(self.q_table[next_state])
+                old_value = self.q_table[state][action]
+                self.q_table[state][action] = old_value + self.alpha * (reward + self.gamma * best_next - old_value)
+
+    def update_no_buffer(self, state, action, reward, next_state):
         best_next = np.max(self.q_table[next_state])
         old_value = self.q_table[state][action]
         self.q_table[state][action] = old_value + self.alpha * (reward + self.gamma * best_next - old_value)
