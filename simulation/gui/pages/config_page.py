@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import QSpinBox, QMessageBox
-
+from PySide6.QtWidgets import QMessageBox
 from simulation.schema import ConfigSchema, ElevatorConfigSchema, TrafficConfigSchema
 from simulation.config import save_config, load_config
 from simulation.enums import AlgorithmEnum, TrafficGeneratorEnum, UpPeakParams, DownPeakParams, MixedPeakParams
@@ -7,25 +6,47 @@ from simulation.utils import extract_params_suffix
 from simulation.gui.core.table_helpers import setup_elevator_table
 
 
-class SettingsPage:
+class ConfigPage:
     def __init__(self, window):
         self.window = window
-        self.window.current_traffic_mode = None
-        self.setup_algorithm_combo()
+        self.current_traffic_mode = None
+        self._setup_algorithm_combo()
+        self._connect_traffic_buttons()
+        self._connect_elevator_logic()
         self.load_settings()
 
+    # --- PUBLIC API ---
     def connect_buttons(self):
-        self.window.SaveButton.clicked.connect(self.save_settings)
-        self.window.MenuButton.clicked.connect(self.window.show_main)
-        self.window.TrafficConfigurationButton.clicked.connect(self.window.show_traffic_conf)
-        self.window.AlgorithmComboBox.currentIndexChanged.connect(self.on_algorithm_changed)
-        self.window.ModelComboBox.currentIndexChanged.connect(self.on_model_changed)
-        self.window.ElevatorsSpinBox.valueChanged.connect(self.on_num_elevators_changed)
+        w = self.window
+        # Settings page
+        w.SaveButton.clicked.connect(self.save_settings)
+        w.MenuButton.clicked.connect(w.show_main)
+        w.TrafficConfigurationButton.clicked.connect(w.show_traffic_conf)
 
-    def setup_algorithm_combo(self):
+        # Traffic page
+        w.SaveButton_2.clicked.connect(self.save_settings)
+        w.MenuButton_2.clicked.connect(w.show_main)
+        w.back_to_config_button.clicked.connect(w.show_settings)
+
+    # --- INITIALIZATION ---
+    def _setup_algorithm_combo(self):
         for alg in AlgorithmEnum:
             self.window.AlgorithmComboBox.addItem(alg.pretty, userData=alg)
 
+    def _connect_elevator_logic(self):
+        w = self.window
+        w.AlgorithmComboBox.currentIndexChanged.connect(self.on_algorithm_changed)
+        w.ModelComboBox.currentIndexChanged.connect(self.on_model_changed)
+        w.ElevatorsSpinBox.valueChanged.connect(self.on_num_elevators_changed)
+
+    def _connect_traffic_buttons(self):
+        w = self.window
+        w.up_peak_button.clicked.connect(self.set_up_peak)
+        w.down_peak_button.clicked.connect(self.set_down_peak)
+        w.mixed_peak_button.clicked.connect(self.set_mixed_peak)
+        w.randomButton.clicked.connect(self.toggle_seed_visibility)
+
+    # --- SETTINGS LOGIC ---
     def load_settings(self):
         config = load_config()
         w = self.window
@@ -48,6 +69,32 @@ class SettingsPage:
             w.ElevatorTable.cellWidget(row, 0).setValue(elevator.max_people)
             w.ElevatorTable.cellWidget(row, 1).setValue(elevator.speed)
             w.ElevatorTable.cellWidget(row, 2).setValue(elevator.starting_floor)
+
+        # Load traffic config
+        match config.traffic.generator_type:
+            case TrafficGeneratorEnum("up-peak"):
+                self.set_up_peak()
+                w.arrval_floor_spin_box.setValue(config.traffic.up_peak_params.arrival_floor)
+            case TrafficGeneratorEnum("down-peak"):
+                self.set_down_peak()
+                w.destination_floor_spin_box.setValue(config.traffic.down_peak_params.destination_floor)
+            case TrafficGeneratorEnum("mixed-peak"):
+                self.set_mixed_peak()
+                p = config.traffic.mixed_peak_params
+                w.arrival_floor_spin_box_2.setValue(p.arrival_floor)
+                w.destination_floor_spin_box_2.setValue(p.destination_floor)
+                w.mixed_up_peak_ratio_spinbox.setValue(p.up_peak_ratio)
+                w.mixed_down_peak_ratio_spinbox.setValue(p.down_peak_ratio)
+                w.mixed_interfloor_peak_ratio_spinbox.setValue(p.interfloor_ratio)
+
+        w.intensitySpinBox.setValue(config.traffic.intensity)
+        if config.traffic.seed is None:
+            w.randomButton.setChecked(True)
+            w.seedSpinBox.setHidden(True)
+        else:
+            w.randomButton.setChecked(False)
+            w.seedSpinBox.setHidden(False)
+            w.seedSpinBox.setValue(config.traffic.seed)
 
     def on_algorithm_changed(self, index):
         alg = AlgorithmEnum(self.window.AlgorithmComboBox.itemData(index))
@@ -79,6 +126,24 @@ class SettingsPage:
     def on_num_elevators_changed(self, value):
         setup_elevator_table(self.window.ElevatorTable, value)
 
+    # --- TRAFFIC LOGIC ---
+    def toggle_seed_visibility(self):
+        self.window.seedSpinBox.setHidden(self.window.randomButton.isChecked())
+
+    def set_up_peak(self):
+        self._set_mode(TrafficGeneratorEnum("up-peak"), 0)
+
+    def set_down_peak(self):
+        self._set_mode(TrafficGeneratorEnum("down-peak"), 1)
+
+    def set_mixed_peak(self):
+        self._set_mode(TrafficGeneratorEnum("mixed-peak"), 2)
+
+    def _set_mode(self, mode, index):
+        self.current_traffic_mode = mode
+        self.window.traffic_stacked_widget.setCurrentIndex(index)
+
+    # --- SAVE SETTINGS ---
     def save_settings(self):
         w = self.window
         floors = w.FloorsSpinBox.value()
@@ -87,7 +152,48 @@ class SettingsPage:
         visualisation = w.VisualisationRadioButton.isChecked()
         algorithm = w.AlgorithmComboBox.currentData()
         model = w.ModelComboBox.currentData()
+        alg = AlgorithmEnum(algorithm)
 
+        # TRAFFIC
+        traffic_mode = self.current_traffic_mode
+        intensity = w.intensitySpinBox.value()
+        seed = None if w.seedSpinBox.isHidden() else w.seedSpinBox.value()
+
+        up_peak_params = down_peak_params = mixed_peak_params = None
+        if traffic_mode == TrafficGeneratorEnum("up-peak"):
+            up_peak_params = UpPeakParams(arrival_floor=w.arrval_floor_spin_box.value())
+            if up_peak_params.arrival_floor > floors:
+                QMessageBox.warning(w, "Bad parameters!", "Arrival floor exceeds number of floors.")
+                return
+        elif traffic_mode == TrafficGeneratorEnum("down-peak"):
+            down_peak_params = DownPeakParams(destination_floor=w.destination_floor_spin_box.value())
+            if down_peak_params.destination_floor > floors:
+                QMessageBox.warning(w, "Bad parameters!", "Destination floor exceeds number of floors.")
+                return
+        elif traffic_mode == TrafficGeneratorEnum("mixed-peak"):
+            mixed_peak_params = MixedPeakParams(
+                arrival_floor=w.arrival_floor_spin_box_2.value(),
+                destination_floor=w.destination_floor_spin_box_2.value(),
+                up_peak_ratio=w.mixed_up_peak_ratio_spinbox.value(),
+                down_peak_ratio=w.mixed_down_peak_ratio_spinbox.value(),
+                interfloor_ratio=w.mixed_interfloor_peak_ratio_spinbox.value(),
+            )
+            try:
+                mixed_peak_params.model_validate(mixed_peak_params)
+            except ValueError:
+                QMessageBox.warning(w, "Bad parameters!", "Sum of ratios must equal 1.0")
+                return
+
+        traffic = TrafficConfigSchema(
+            generator_type=traffic_mode,
+            intensity=intensity,
+            seed=seed,
+            up_peak_params=up_peak_params,
+            down_peak_params=down_peak_params,
+            mixed_peak_params=mixed_peak_params,
+        )
+
+        # ELEVATORS
         elevators = []
         for row in range(w.ElevatorTable.rowCount()):
             elevators.append(ElevatorConfigSchema(
@@ -95,6 +201,17 @@ class SettingsPage:
                 speed=w.ElevatorTable.cellWidget(row, 1).value(),
                 starting_floor=w.ElevatorTable.cellWidget(row, 2).value()
             ))
+
+        # VALIDATION
+        if alg.needs_model:
+            n_elevators, n_floors = extract_params_suffix(model)
+            if (n_elevators, n_floors) != (w.ElevatorTable.rowCount(), floors):
+                QMessageBox.warning(
+                    w,
+                    "Wrong configuration!",
+                    "Number of elevators/floors doesn't match model parameters."
+                )
+                return
 
         configuration = ConfigSchema(
             floors=floors,
@@ -104,7 +221,8 @@ class SettingsPage:
             elevators=elevators,
             algorithm=algorithm,
             model=model,
-            traffic=None  # Zostaje w traffic_page
+            traffic=traffic
         )
+
         save_config(configuration)
         QMessageBox.information(w, "Saved", "Settings saved successfully.")
