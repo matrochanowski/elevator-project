@@ -4,7 +4,8 @@ from simulation.core.elevator_system import ElevatorSystem
 from simulation.core.elevator import Elevator
 
 from simulation.engine.step_operator import operator
-from simulation.engine.logger import SimulationLogger
+from simulation.analysis.logger import SimulationLogger
+from simulation.engine.utils import summarize_simulation
 
 from simulation.visualisation.renderer import Renderer
 
@@ -48,7 +49,6 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
 
         actions = policy(system)
         _, system, _ = operator(actions, system, step_count)
-        logger.log_step(step_count, system)
 
         current_state = get_state(system)
 
@@ -68,7 +68,7 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
     if visualisation:
         pygame.quit()
 
-    logger.finalize()
+    logger.save_system_state(system)
 
     return system
 
@@ -79,3 +79,4 @@ building.elevators = [Elevator(max_people_inside=elevator.max_people,
                                speed=elevator.speed) for elevator in cfg.elevators]
 renderer_obj = Renderer(cfg.floors)
 print(run_simulation(cfg.steps, building, ALGORITHM, cfg.visualisation, renderer_obj))
+summarize_simulation(building)

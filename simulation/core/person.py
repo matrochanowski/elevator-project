@@ -1,30 +1,17 @@
-import random
-
-
 class Person:
-    def __init__(self, max_floor, desired_floor=None, starting_floor=None):
-        if starting_floor is None:
-            choice = random.randint(0, 1)
-            if choice == 0:
-                self.starting_floor = 0
-            else:
-                self.starting_floor = random.randint(1, max_floor)
-        else:
-            self.starting_floor = starting_floor
+    def __init__(self, step, desired_floor=None, starting_floor=None):
+        self.starting_floor = starting_floor
+        self.desired_floor = desired_floor
+        self.appearing_time = step
 
-        self.current_floor = starting_floor
-        self.wait_time = 0
+        self.journey_time = 0
+        self.waiting_time = 0
+        self.travel_time = 0
 
-        if desired_floor is None:
-            if self.starting_floor == 0:
-                self.desired_floor = random.randint(1, max_floor)
-            else:
-                self.desired_floor = 0
-        else:
-            self.desired_floor = desired_floor
+        self.state = "WAITING FOR ELEVATOR"  # POSSIBLE STATES ["WAITING FOR ELEVATOR", "IN ELEVATOR", "AT DESTINATION"]
 
     def __str__(self):
-        return f"{self.wait_time}"
+        return f"{self.journey_time, self.waiting_time, self.travel_time}"
 
     def increase_waiting_time(self, step=1):
         """
@@ -32,4 +19,17 @@ class Person:
         :param step: How many steps
         :return:
         """
-        self.wait_time += step
+        match self.state:
+            case "WAITING FOR ELEVATOR":
+                self.journey_time += step
+                self.waiting_time += step
+            case "IN ELEVATOR":
+                self.journey_time += step
+                self.travel_time += step
+
+
+    def enter_elevator(self):
+        self.state = "IN ELEVATOR"
+
+    def leave_elevator(self):
+        self.state = "AT DESTINATION"

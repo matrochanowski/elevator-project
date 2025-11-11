@@ -1,5 +1,6 @@
 from simulation.core.elevator import Elevator
 from simulation.core.elevator_system import ElevatorSystem
+from simulation.core.person import Person
 import numpy as np
 from typing import List, Set, Tuple
 from datetime import datetime
@@ -70,22 +71,8 @@ def sort_passengers(passengers_array):
     :return:
     """
     # układ: pasażerowie czekający najdłużej od lewej strony wektora
-    return sorted(filter(lambda x: x is not None, passengers_array), key=lambda person: person.wait_time, reverse=True)
-
-
-def increase_personal_counter(elevator: Elevator, people_array):
-    """
-    Function increases step counter of each object participating in the simulation
-    :param elevator: Obiekt klasy Elevator
-    :param people_array:
-    :return:
-    """
-    for passenger_inside in elevator.people_inside_arr:
-        passenger_inside.increase_waiting_time()
-    for floor in people_array:
-        for passenger_outside in floor:
-            if passenger_outside is not None:
-                passenger_outside.increase_waiting_time()
+    return sorted(filter(lambda x: x is not None, passengers_array), key=lambda person: person.journey_time,
+                  reverse=True)
 
 
 def how_many_people(people_array, elevators: List[Elevator]):
@@ -267,3 +254,32 @@ def save_simulation_log(output_dir="logs", filename_prefix="run"):
     df.to_parquet(filename, index=False, compression="snappy")
 
     print(f"[LOG] Saved {len(df)} lines to file: {filename}")
+
+
+def summarize_simulation(elevator_system: ElevatorSystem):
+    passengers: List[Person] = elevator_system.passengers_at_dest
+    n_passengers = len(passengers)
+
+    if not passengers:
+        print("No passengers at destination, no data to summarize")
+        return
+
+    mean_journey_time = 0
+    mean_j_time_dist = 0
+    mean_waiting_time = 0
+    mean_travel_time = 0
+    for passenger in passengers:
+        mean_journey_time += passenger.journey_time
+        mean_j_time_dist += passenger.journey_time / abs(passenger.starting_floor - passenger.desired_floor)
+        mean_waiting_time += passenger.waiting_time
+        mean_travel_time += passenger.travel_time
+
+    mean_journey_time /= n_passengers
+    mean_waiting_time /= n_passengers
+    mean_travel_time /= n_passengers
+    mean_j_time_dist /= n_passengers
+
+    print("Średnia długość całkowitej podróży: ", mean_journey_time)
+    print("Średnia długość oczekiwania na przybycie windy: ", mean_waiting_time)
+    print("Średnia długość podróży windą: ", mean_travel_time)
+    print("Średnia długość całkowitej podróży na piętro: ", mean_j_time_dist)

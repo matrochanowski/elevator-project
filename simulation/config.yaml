@@ -1,11 +1,8 @@
 floors: 3
 max_people_floor: 12
 steps: 3211
-visualisation: true
+visualisation: false
 elevators:
-- max_people: 5
-  speed: 5
-  starting_floor: 0
 - max_people: 5
   speed: 5
   starting_floor: 0
@@ -13,8 +10,8 @@ algorithm: nearest_car
 model: null
 traffic:
   generator_type: up-peak
-  intensity: 0.15
-  seed: 5
+  intensity: 0.05
+  seed: null
   up_peak_params:
     arrival_floor: 0
     destination_distribution: null

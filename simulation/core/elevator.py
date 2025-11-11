@@ -38,6 +38,7 @@ class Elevator:
         :return:
         """
         for person in people_entering_arr:
+            person.enter_elevator()
             self.people_inside_arr.append(person)
         self.update_people_inside()
 
@@ -47,6 +48,7 @@ class Elevator:
         :return:
         """
         for person in people_leaving_arr:
+            person.leave_elevator()
             self.people_inside_arr.remove(person)
         self.update_people_inside()
 

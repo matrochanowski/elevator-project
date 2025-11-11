@@ -86,7 +86,7 @@ def generate_up_peak(elevator_system: ElevatorSystem, step: int, config: ConfigS
         if desired_floor == starting_floor:
             continue
 
-        person = Person(max_floor=max_floor, starting_floor=starting_floor, desired_floor=desired_floor)
+        person = Person(step=step, starting_floor=starting_floor, desired_floor=desired_floor)
         if starting_floor not in new_floors_arr:
             new_floors_arr.append(starting_floor)
         insert_person(people_array, starting_floor, person, max_people_floor)
@@ -117,7 +117,7 @@ def generate_down_peak(elevator_system: ElevatorSystem, step: int, config: Confi
         if starting_floor == destination_floor:
             continue
 
-        person = Person(max_floor=max_floor, starting_floor=starting_floor, desired_floor=destination_floor)
+        person = Person(step=step, starting_floor=starting_floor, desired_floor=destination_floor)
         if starting_floor not in new_floors_arr:
             new_floors_arr.append(starting_floor)
         insert_person(people_array, starting_floor, person, max_people_floor)
@@ -170,7 +170,7 @@ def generate_mixed_peak(elevator_system: ElevatorSystem, step: int, config: Conf
             starting_floor = start
             desired_floor = dest
 
-        person = Person(max_floor=max_floor, starting_floor=starting_floor, desired_floor=desired_floor)
+        person = Person(step=step, starting_floor=starting_floor, desired_floor=desired_floor)
         if starting_floor not in new_floors_arr:
             new_floors_arr.append(starting_floor)
         insert_person(people_array, starting_floor, person, max_people_floor)

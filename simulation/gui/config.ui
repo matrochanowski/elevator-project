@@ -576,7 +576,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="up_peak_page">
        <widget class="QLabel" name="label_18">
@@ -602,7 +602,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QTableWidget" name="tableWidget">
+       <widget class="QTableWidget" name="upPeakTable">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -695,7 +695,7 @@
          <string>Destination floor:</string>
         </property>
        </widget>
-       <widget class="QDoubleSpinBox" name="mixed_up_peak_ratio_spinbox">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox">
         <property name="geometry">
          <rect>
           <x>90</x>
