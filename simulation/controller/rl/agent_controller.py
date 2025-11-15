@@ -15,3 +15,4 @@ class AgentController:
         state = get_state(elevator_system)
         action_idx = self.agent.choose_action(state)
         return [self.agent.actions[action_idx]]
+    

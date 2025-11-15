@@ -48,7 +48,7 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
         previous_state = get_state(system)
 
         actions = policy(system)
-        _, system, _ = operator(actions, system, step_count)
+        system = operator(actions, system, step_count)
 
         current_state = get_state(system)
 

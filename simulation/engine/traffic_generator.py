@@ -6,6 +6,8 @@ from simulation.config import load_config
 from simulation.schema import ConfigSchema
 from simulation.enums import TrafficGeneratorEnum
 
+CONFIG: ConfigSchema = load_config()
+
 
 # ------------------ helper functions ------------------
 
@@ -48,7 +50,7 @@ def insert_person(people_array, start_floor: int, person: Person, max_people_flo
 # ------------------ main generation dispatcher ------------------
 
 def generate_passengers(elevator_system: ElevatorSystem, step: int):
-    config: ConfigSchema = load_config()
+    config: ConfigSchema = CONFIG
     generator_type = config.traffic.generator_type
 
     match generator_type:

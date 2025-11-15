@@ -4,7 +4,7 @@ from simulation.engine.traffic_generator import *
 from simulation.core.elevator_system import ElevatorSystem
 
 
-def operator(actions, elevator_system: ElevatorSystem, step: int):
+def operator(actions, elevator_system: ElevatorSystem, step: int) -> ElevatorSystem:
     def increase_personal_counter_elevator(elevator):
         for passenger_inside in elevator.people_inside_arr:
             passenger_inside.increase_waiting_time()
@@ -70,7 +70,4 @@ def operator(actions, elevator_system: ElevatorSystem, step: int):
         if lift.delay > 0:
             lift.delay -= 1
 
-    # --- state vector (deprecated) ---
-    vector_state = get_system_state(elevator_system.elevators, elevator_system)
-
-    return elevator_system.elevators, elevator_system, vector_state
+    return elevator_system

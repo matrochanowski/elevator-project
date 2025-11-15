@@ -52,6 +52,7 @@ class ConfigPage:
         w = self.window
 
         w.FloorsSpinBox.setValue(config.floors)
+        w.ElevatorsSpinBox.setValue(len(config.elevators))
         w.StepsHorizontalSlider.setValue(config.steps)
         w.MaxPeopleFloorSpinBox.setValue(config.max_people_floor)
         w.VisualisationRadioButton.setChecked(config.visualisation)
@@ -132,12 +133,15 @@ class ConfigPage:
 
     def set_up_peak(self):
         self._set_mode(TrafficGeneratorEnum("up-peak"), 0)
+        self.window.up_peak_button.setChecked(True)
 
     def set_down_peak(self):
         self._set_mode(TrafficGeneratorEnum("down-peak"), 1)
+        self.window.down_peak_button.setChecked(True)
 
     def set_mixed_peak(self):
         self._set_mode(TrafficGeneratorEnum("mixed-peak"), 2)
+        self.window.mixed_peak_button.setChecked(True)
 
     def _set_mode(self, mode, index):
         self.current_traffic_mode = mode

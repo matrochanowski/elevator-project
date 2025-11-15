@@ -37,7 +37,7 @@ def train_q_learning(episodes=100, steps=200, agent=QLearningAgent(ACTIONS)):
             actions = [ACTIONS[action_idx]]
 
             state_before = get_state(system)
-            _, system, _ = operator(actions, system, state=0)
+            system = operator(actions, system, step=0)
             state_after = get_state(system)
 
             reward = reward_function(decode_state(state_before, system), decode_state(state_after, system), actions)
@@ -63,22 +63,22 @@ def train_q_learning(episodes=100, steps=200, agent=QLearningAgent(ACTIONS)):
 
 if __name__ == "__main__":
     rewards = []
-    buffer_size = 20
+    buffer_size = 0
     agt = QLearningAgent(ACTIONS, gamma=0.96, alpha=0.5, buffer_size=buffer_size)
     trained_agent, reward = train_q_learning(episodes=5, steps=1000, agent=agt)
     rewards.append(reward)
 
-    n = 20_000
+    n = 20
 
     for i in range(n):
         trained_agent, reward = train_q_learning(episodes=20, steps=1000, agent=trained_agent)
         rewards.append(reward)
 
-        if i % 1000 == 0:
-            trained_agent.save(f"checkpoints/with_buffer{i / 1000}")
+        # if i % 1000 == 0:
+        #     trained_agent.save(f"checkpoints/with_buffer{i / 1000}")
 
-    trained_agent.save("with_buffer")
-    trained_agent.save_to_xlsx("q_matrix1.xlsx")
+    trained_agent.save("experiment_no_buffer")
+    # trained_agent.save_to_xlsx("q_matrix1.xlsx")
 
     x = np.linspace(0, n + 1, n + 1)
     y = np.array(rewards)

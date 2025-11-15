@@ -4,7 +4,6 @@ import numpy as np
 class ElevatorSystem:
     def __init__(self, max_floor, spawn_chance, max_people_per_floor):
         self.max_floor = max_floor
-        self.spawn_chance = spawn_chance
         self.max_people_floor = max_people_per_floor
 
         self.elevators = []  # list of elevator objects
@@ -25,9 +24,6 @@ class ElevatorSystem:
                 info.append(f"  Floor {floor}: {len(waiting)} people waiting")
         return "\n".join(info)
 
-    def add_elevator(self, elevator):
-        self.elevators.append(elevator)
-
     def add_floor_to_requested_queue(self, new_floor):
         if new_floor not in self.requested_floors:
             self.requested_floors.append(new_floor)
@@ -35,11 +31,3 @@ class ElevatorSystem:
     def remove_floor_from_requested(self, floor):
         if floor in self.requested_floors:
             self.requested_floors.remove(floor)
-
-    def requested_chosen_floors_above(self, elevator):
-        current_floor = elevator.current_floor
-        return [f for f in self.requested_floors + elevator.chosen_floors if f > current_floor]
-
-    def requested_chosen_floors_below(self, elevator):
-        current_floor = elevator.current_floor
-        return [f for f in self.requested_floors + elevator.chosen_floors if f < current_floor]
