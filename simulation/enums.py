@@ -10,12 +10,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 class AlgorithmEnum(str, Enum):
     Q_LEARNING = "q_learning"
     NEAREST_CAR = "nearest_car"
+    COLLECTIVE_CONTROL = "collective_control"
 
     @property
     def pretty(self) -> str:
         mapping = {
             AlgorithmEnum.Q_LEARNING: "Q-Learning",
-            AlgorithmEnum.NEAREST_CAR: "Nearest Car"
+            AlgorithmEnum.NEAREST_CAR: "Nearest Car",
+            AlgorithmEnum.COLLECTIVE_CONTROL: "Collective Control"
         }
         return mapping[self]
 
@@ -30,10 +32,12 @@ class AlgorithmEnum(str, Enum):
             case AlgorithmEnum.NEAREST_CAR:
                 from simulation.controller.classical.nearest_car_policy import nearest_car_policy
                 return nearest_car_policy
+            case AlgorithmEnum.COLLECTIVE_CONTROL:
+                from simulation.controller.classical.collective_control_policy import collective_control_policy
+                return collective_control_policy
             case AlgorithmEnum.Q_LEARNING:
                 from simulation.controller.rl.agent_controller import AgentController
                 model_path = os.path.join(PROJECT_ROOT, "simulation", "controller", "rl", "models", self.value, model)
-                print(model_path)
                 agent = AgentController(model_path)
                 return agent.use_agent
             case _:

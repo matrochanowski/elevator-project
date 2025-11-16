@@ -2,9 +2,12 @@ import pygame
 
 
 class Renderer:
+    BOTTOM_MARGIN = 30
+
     WIDTH = 800
     HEIGHT = 600
     FPS = 30
+
 
     # Colors
     WHITE = (255, 255, 255)
@@ -15,7 +18,7 @@ class Renderer:
     def __init__(self, max_floor: int):
         self.max_floor = max_floor
         # Dynamically derived dimensions
-        self.floor_height = self.HEIGHT // (max_floor + 1)
+        self.floor_height = (self.HEIGHT - self.BOTTOM_MARGIN) // (max_floor + 1)
         self.circle_radius = 15
 
     def draw(self, screen, system):
@@ -35,12 +38,8 @@ class Renderer:
 
     def draw_floor(self, screen, floor: int):
         """Draw floor line and floor number."""
-        pygame.draw.line(
-            screen,
-            self.WHITE,
-            (0, self.HEIGHT - self.floor_height * (floor + 1)),
-            (self.WIDTH, self.HEIGHT - self.floor_height * (floor + 1)),
-        )
+        y = self.HEIGHT - self.BOTTOM_MARGIN - self.floor_height * (floor + 1)
+        pygame.draw.line(screen, self.WHITE, (0, y), (self.WIDTH, y))
 
         font = pygame.font.Font(None, 24)
         text = font.render(str(floor), True, self.WHITE)
@@ -51,7 +50,7 @@ class Renderer:
         font = pygame.font.Font(None, 20)
 
         for floor in range(self.max_floor + 1):
-            base_y = self.HEIGHT - self.floor_height * floor - self.floor_height // 2
+            base_y = self.HEIGHT - self.BOTTOM_MARGIN - self.floor_height * floor - self.floor_height // 2
 
             for i, passenger in enumerate(people_array[floor]):
                 if passenger is not None:
@@ -69,28 +68,48 @@ class Renderer:
         if num_elevators == 0:
             return
 
-        # Dynamic elevator sizing based on available width
-        available_width = self.WIDTH // 3  # right third of screen reserved for elevators
-        spacing = 10
+        available_width = self.WIDTH // 3
+        spacing = 20
         elevator_width = max(20, (available_width - (num_elevators + 1) * spacing) // num_elevators)
         elevator_height = self.floor_height - 10
 
         font = pygame.font.Font(None, 24)
+        arrow_font = pygame.font.Font(None, 28)
 
         for i, elevator in enumerate(elevators):
-            x_position = self.WIDTH - available_width + spacing + i * (elevator_width + spacing)
-            y_position = self.HEIGHT - self.floor_height * (elevator.current_floor + 1)
+            x_position = self.WIDTH - available_width + spacing + i * (elevator_width + spacing) - 50
+            y_position = self.HEIGHT - self.BOTTOM_MARGIN - self.floor_height * (elevator.current_floor + 1)
 
             color = self.GREEN if elevator.state == "STANDING" else self.RED
 
             pygame.draw.rect(screen, color, (x_position, y_position, elevator_width, elevator_height))
 
-            # Show number of people inside elevator
+            # number of people inside
             text = font.render(str(len(elevator.people_inside_arr)), True, self.WHITE)
             text_rect = text.get_rect(
                 center=(x_position + elevator_width // 2, y_position + elevator_height // 2)
             )
             screen.blit(text, text_rect)
+
+            # --- direction arrow ---
+            if elevator.state == "UP":
+                arrow = "^"
+            elif elevator.state == "DOWN":
+                arrow = "v"
+            else:
+                arrow = ""
+
+            if arrow:
+                arrow_text = arrow_font.render(arrow, True, self.WHITE)
+                if elevator.state == "DOWN":
+                    arrow_rect = arrow_text.get_rect(
+                        center=(x_position + elevator_width // 2, y_position + self.floor_height)
+                    )
+                else:
+                    arrow_rect = arrow_text.get_rect(
+                        center=(x_position + elevator_width // 2, y_position - 5)
+                    )
+                screen.blit(arrow_text, arrow_rect)
 
     def draw_requests(self, screen, system):
         """Draw requested floors + chosen floors by passengers inside elevators."""
