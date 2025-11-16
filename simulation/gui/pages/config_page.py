@@ -28,6 +28,9 @@ class ConfigPage:
         w.MenuButton_2.clicked.connect(w.show_main)
         w.back_to_config_button.clicked.connect(w.show_settings)
 
+        self.window.StepsHorizontalSlider.sliderMoved.connect(self.on_steps_changed)
+        self.window.StepsHorizontalSlider.valueChanged.connect(self.on_steps_changed)
+
     # --- INITIALIZATION ---
     def _setup_algorithm_combo(self):
         for alg in AlgorithmEnum:
@@ -54,6 +57,9 @@ class ConfigPage:
         w.FloorsSpinBox.setValue(config.floors)
         w.ElevatorsSpinBox.setValue(len(config.elevators))
         w.StepsHorizontalSlider.setValue(config.steps)
+        w.StepsHorizontalSlider.setSingleStep(1000)
+        w.StepsHorizontalSlider.setPageStep(1000)
+        w.stepCount.setText(str(config.steps))
         w.MaxPeopleFloorSpinBox.setValue(config.max_people_floor)
         w.VisualisationRadioButton.setChecked(config.visualisation)
 
@@ -126,6 +132,11 @@ class ConfigPage:
 
     def on_num_elevators_changed(self, value):
         setup_elevator_table(self.window.ElevatorTable, value)
+
+    def on_steps_changed(self, value):
+        value = (value // 1000) * 1000
+        self.window.StepsHorizontalSlider.setValue(value)
+        self.window.stepCount.setText(str(self.window.StepsHorizontalSlider.value()))
 
     # --- TRAFFIC LOGIC ---
     def toggle_seed_visibility(self):

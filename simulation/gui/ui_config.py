@@ -65,10 +65,12 @@ class Ui_MainWindow(object):
         self.label.setGeometry(QRect(70, 30, 101, 16))
         self.StepsHorizontalSlider = QSlider(self.page_2)
         self.StepsHorizontalSlider.setObjectName(u"StepsHorizontalSlider")
-        self.StepsHorizontalSlider.setGeometry(QRect(70, 120, 261, 18))
+        self.StepsHorizontalSlider.setGeometry(QRect(70, 120, 221, 18))
         self.StepsHorizontalSlider.setMinimumSize(QSize(160, 0))
         self.StepsHorizontalSlider.setMinimum(100)
-        self.StepsHorizontalSlider.setMaximum(10000)
+        self.StepsHorizontalSlider.setMaximum(50000)
+        self.StepsHorizontalSlider.setSingleStep(100)
+        self.StepsHorizontalSlider.setPageStep(1)
         self.StepsHorizontalSlider.setSliderPosition(1000)
         self.StepsHorizontalSlider.setOrientation(Qt.Orientation.Horizontal)
         self.label_2 = QLabel(self.page_2)
@@ -133,6 +135,9 @@ class Ui_MainWindow(object):
         self.TrafficConfigurationButton = QPushButton(self.page_2)
         self.TrafficConfigurationButton.setObjectName(u"TrafficConfigurationButton")
         self.TrafficConfigurationButton.setGeometry(QRect(370, 320, 131, 31))
+        self.stepCount = QLabel(self.page_2)
+        self.stepCount.setObjectName(u"stepCount")
+        self.stepCount.setGeometry(QRect(300, 120, 49, 16))
         self.stackedWidget.addWidget(self.page_2)
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
@@ -387,7 +392,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(4)
+        self.stackedWidget.setCurrentIndex(1)
         self.traffic_stacked_widget.setCurrentIndex(2)
 
 
@@ -421,6 +426,7 @@ class Ui_MainWindow(object):
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"\u2013", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"\u2013", None))
         self.TrafficConfigurationButton.setText(QCoreApplication.translate("MainWindow", u"Traffic Configuration", None))
+        self.stepCount.setText(QCoreApplication.translate("MainWindow", u"StepCount", None))
         self.label_12.setText(QCoreApplication.translate("MainWindow", u"Traffic Configuration Panel", None))
         self.MenuButton_2.setText(QCoreApplication.translate("MainWindow", u"Menu", None))
         self.up_peak_button.setText(QCoreApplication.translate("MainWindow", u"Up-peak", None))
