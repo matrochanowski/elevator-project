@@ -11,6 +11,7 @@ class MainMenuPage:
         self.window.startButton.clicked.connect(self.start_simulation)
         self.window.settingsButton.clicked.connect(self.window.show_settings)
         self.window.reinforcementButton.clicked.connect(self.window.show_reinforcement_panel)
+        self.window.analysePushButton.clicked.connect(self.window.show_analyse_panel)
 
     def start_simulation(self):
         try:

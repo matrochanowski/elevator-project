@@ -4,7 +4,7 @@ from simulation.gui.ui_config import Ui_MainWindow
 from simulation.gui.pages.main_menu_page import MainMenuPage
 from simulation.gui.pages.config_page import ConfigPage
 from simulation.gui.pages.reinforcement_page import ReinforcementPage
-from simulation.gui.pages.summary_page import SummaryPage
+from simulation.gui.pages.results_page import ResultsPage
 
 
 class ElevatorSimWindowController(QMainWindow, Ui_MainWindow):
@@ -14,14 +14,15 @@ class ElevatorSimWindowController(QMainWindow, Ui_MainWindow):
 
         # subpages init
         self.main_menu = MainMenuPage(self)
-        self.config_page = ConfigPage(self)       # settings + traffic
+        self.config_page = ConfigPage(self)  # settings + traffic
         self.reinforcement_page = ReinforcementPage(self)
-        self.summary_page = SummaryPage(self)
+        self.results_page = ResultsPage(self)
 
         # buttons connection
         self.main_menu.connect_buttons()
         self.config_page.connect_buttons()
         self.reinforcement_page.connect_buttons()
+        self.results_page.connect_buttons()
 
         # start page
         self.show_main()
@@ -39,5 +40,5 @@ class ElevatorSimWindowController(QMainWindow, Ui_MainWindow):
     def show_reinforcement_panel(self):
         self.stackedWidget.setCurrentIndex(3)
 
-    def show_summary(self):
+    def show_analyse_panel(self):
         self.stackedWidget.setCurrentIndex(4)

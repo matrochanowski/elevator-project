@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="page">
      <widget class="QPushButton" name="startButton">
@@ -64,6 +64,19 @@
       </property>
       <property name="text">
        <string>Reinforcement Learning</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="analysePushButton">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>190</y>
+        <width>141</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Analyse</string>
       </property>
      </widget>
     </widget>
@@ -576,7 +589,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="up_peak_page">
        <widget class="QLabel" name="label_18">
@@ -695,7 +708,7 @@
          <string>Destination floor:</string>
         </property>
        </widget>
-       <widget class="QDoubleSpinBox" name="doubleSpinBox">
+       <widget class="QDoubleSpinBox" name="mixed_up_peak_ratio_spinbox">
         <property name="geometry">
          <rect>
           <x>90</x>
@@ -847,17 +860,462 @@
       </property>
      </widget>
     </widget>
+    <widget class="QWidget" name="page_5">
+     <widget class="QLabel" name="label_26">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>30</y>
+        <width>101</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LayoutDirection::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>Result analysis</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="resultsFileComboBox">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>110</y>
+        <width>261</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_27">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>90</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Results file:</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="acceptFilenameButton">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>110</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>OK</string>
+      </property>
+     </widget>
+     <widget class="QFrame" name="frame">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>200</y>
+        <width>271</width>
+        <height>201</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <widget class="QLabel" name="label_29">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>10</y>
+         <width>49</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Steps:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="numberOfStepsAnalysis">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>10</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_30">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>61</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Algorithm:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="algorithmAnalysis">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>40</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_32">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>70</y>
+         <width>101</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Generation type:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="generatorAnalysis">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>70</y>
+         <width>101</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_31">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>100</y>
+         <width>91</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Generation seed:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="seedAnalysis">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>100</y>
+         <width>91</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_39">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>130</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Number of elevators:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_40">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>160</y>
+         <width>101</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Number of floors:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="elevatorsAnalysis">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>130</y>
+         <width>49</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="floorsAnalysis">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>160</y>
+         <width>49</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="advancedAnalysis">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>170</y>
+         <width>79</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Advanced</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label_28">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>180</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Simulation info:</string>
+      </property>
+     </widget>
+     <widget class="QFrame" name="frame_2">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>200</y>
+        <width>271</width>
+        <height>201</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <widget class="QLabel" name="label_34">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>10</y>
+         <width>111</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Mean journey time:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_35">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>111</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Mean waiting time:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_36">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>70</y>
+         <width>131</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Mean travel time:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_37">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>100</y>
+         <width>111</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Wp:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_38">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>130</y>
+         <width>111</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Passengers:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="journeyTime">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>10</y>
+         <width>49</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="waitingTime">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>40</y>
+         <width>49</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="travelTime">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>70</y>
+         <width>49</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="wTime">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>100</y>
+         <width>49</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="nPassengers">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>130</y>
+         <width>49</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label_33">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>180</y>
+        <width>49</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Results:</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="backButton">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>40</y>
+        <width>79</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>← Back</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="changeNamePushButton">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>143</y>
+        <width>91</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Change name</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="reloadFilesPushButton">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>143</y>
+        <width>79</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Reload files</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>33</height>
-    </rect>
-   </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

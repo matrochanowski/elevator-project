@@ -5,7 +5,6 @@ from simulation.core.elevator import Elevator
 
 from simulation.engine.step_operator import operator
 from simulation.analysis.logger import SimulationLogger
-from simulation.engine.utils import summarize_simulation
 
 from simulation.visualisation.renderer import Renderer
 
@@ -79,4 +78,3 @@ building.elevators = [Elevator(max_people_inside=elevator.max_people,
                                speed=elevator.speed) for elevator in cfg.elevators]
 renderer_obj = Renderer(cfg.floors)
 print(run_simulation(cfg.steps, building, ALGORITHM, cfg.visualisation, renderer_obj))
-summarize_simulation(building)

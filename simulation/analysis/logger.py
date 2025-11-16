@@ -4,9 +4,11 @@ from datetime import datetime
 import pickle
 
 from simulation.core.elevator_system import ElevatorSystem
+from simulation import config
 
 SIMULATION_DIR = Path(__file__).resolve().parents[1]
 LOG_DIR = SIMULATION_DIR / "logs"
+CONFIG = config.load_config()
 
 
 class SimulationLogger:
@@ -22,7 +24,10 @@ class SimulationLogger:
         """Saves system object to pickle."""
         try:
             with open(self.system_path, "wb") as f:
-                pickle.dump(system, f)
-            print(f"[LOG] Zapisano stan systemu do pliku: {self.system_path}")
+                pickle.dump(
+                    {"system": system,
+                     "config": CONFIG},
+                     f)
+            print(f"[LOG] Saved system to file: {self.system_path}")
         except Exception as e:
-            print(f"[LOG] Błąd podczas zapisu systemu: {e}")
+            print(f"[LOG] Error while saving: {e}")
