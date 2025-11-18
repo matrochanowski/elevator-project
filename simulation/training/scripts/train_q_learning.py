@@ -18,7 +18,7 @@ def train_q_learning(episodes=100, steps=200, agent=QLearningAgent(ACTIONS)):
     whole_reward = 0
     flag = False
     for ep in range(episodes):
-        system = ElevatorSystem(cfg.floors, 50, cfg.max_people_floor)
+        system = ElevatorSystem(cfg.floors, cfg.max_people_floor)
         system.elevators = [Elevator(max_people_inside=elevator.max_people,
                                      max_possible_floor=cfg.floors,
                                      speed=elevator.speed) for elevator in cfg.elevators]

@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from simulation.enums import (AlgorithmEnum, TrafficGeneratorEnum, UpPeakParams,
                               DownPeakParams, InterfloorParams, MixedPeakParams,
-                              UniformParams)
+                              UniformParams, FromFileParams)
 
 
 class TrafficConfigSchema(BaseModel):
@@ -17,6 +17,7 @@ class TrafficConfigSchema(BaseModel):
     interfloor_params: Optional[InterfloorParams] = None
     mixed_peak_params: Optional[MixedPeakParams] = None
     uniform_params: Optional[UniformParams] = None
+    from_file_params: Optional[FromFileParams] = None
 
     @model_validator(mode='after')
     def validate_generator_params(self):
@@ -27,7 +28,8 @@ class TrafficConfigSchema(BaseModel):
             TrafficGeneratorEnum.DOWN_PEAK: self.down_peak_params,
             TrafficGeneratorEnum.INTERFLOOR: self.interfloor_params,
             TrafficGeneratorEnum.MIXED_PEAK: self.mixed_peak_params,
-            TrafficGeneratorEnum.UNIFORM: self.uniform_params
+            TrafficGeneratorEnum.UNIFORM: self.uniform_params,
+            TrafficGeneratorEnum.FROM_FILE: self.from_file_params
         }
 
         if required_params[generator_type] is None:

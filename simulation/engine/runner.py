@@ -72,7 +72,7 @@ def run_simulation(steps: int, system: ElevatorSystem, policy, visualisation, re
     return system
 
 
-building = ElevatorSystem(cfg.floors, 25, cfg.max_people_floor)
+building = ElevatorSystem(cfg.floors, cfg.max_people_floor)
 building.elevators = [Elevator(max_people_inside=elevator.max_people,
                                max_possible_floor=cfg.floors,
                                speed=elevator.speed) for elevator in cfg.elevators]

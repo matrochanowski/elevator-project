@@ -1,7 +1,7 @@
 floors: 3
 max_people_floor: 12
-steps: 3211
-visualisation: false
+steps: 20000
+visualisation: true
 elevators:
 - max_people: 5
   speed: 5
@@ -9,8 +9,8 @@ elevators:
 algorithm: nearest_car
 model: null
 traffic:
-  generator_type: up-peak
-  intensity: 0.05
+  generator_type: 'from file'
+  intensity: 0.55000000000000002
   seed: null
   up_peak_params:
     arrival_floor: 0
@@ -19,3 +19,5 @@ traffic:
   interfloor_params: null
   mixed_peak_params: null
   uniform_params: null
+  from_file_params:
+    filename: 'test.csv'

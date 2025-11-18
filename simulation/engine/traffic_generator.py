@@ -1,5 +1,10 @@
 import random
 import copy
+import csv
+from pathlib import Path
+import os
+from collections import defaultdict
+
 from simulation.core.person import Person
 from simulation.core.elevator_system import ElevatorSystem
 from simulation.config import load_config
@@ -7,6 +12,18 @@ from simulation.schema import ConfigSchema
 from simulation.enums import TrafficGeneratorEnum
 
 CONFIG: ConfigSchema = load_config()
+
+ENGINE_DIR = Path(__file__).resolve().parents[0]
+SCENARIO_DIR = ENGINE_DIR / "scenarios"
+
+if CONFIG.traffic.generator_type is TrafficGeneratorEnum('from file'):
+    filename = CONFIG.traffic.from_file_params.filename
+    scenario_by_step = defaultdict(list)
+    with open(os.path.join(SCENARIO_DIR, filename), 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            s = int(row['step'])
+            scenario_by_step[s].append(row)
 
 
 # ------------------ helper functions ------------------
@@ -60,7 +77,39 @@ def generate_passengers(elevator_system: ElevatorSystem, step: int):
             return generate_down_peak(elevator_system, step, config)
         case TrafficGeneratorEnum('mixed-peak'):
             return generate_mixed_peak(elevator_system, step, config)
+        case TrafficGeneratorEnum('from file'):
+            print("test 1")
+            return generate_from_file(elevator_system, step, config)
     return []
+
+
+# --------------- apriori generator --------------
+
+def generate_scenario_apriori(n_steps: int, scenario_name: str):
+    config: ConfigSchema = CONFIG
+
+    fake_system = ElevatorSystem(config.floors, config.max_people_floor)
+
+    scenario = []
+
+    for step in range(n_steps):
+        generate_passengers(fake_system, step)
+        pair = 0
+
+        for floor in fake_system.people_array:
+            for person in floor:
+                person: Person | None
+                if person:
+                    scenario.append((step, pair, person.starting_floor, person.desired_floor))
+                    pair += 1
+
+        fake_system = ElevatorSystem(config.floors, config.max_people_floor)
+
+    path = f'{os.path.join(SCENARIO_DIR, scenario_name)}.csv'
+    with open(path, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['step', 'pair_number', 'starting_floor', 'desired_floor'])
+        writer.writerows(scenario)
 
 
 # ------------------ generators ------------------
@@ -177,4 +226,18 @@ def generate_mixed_peak(elevator_system: ElevatorSystem, step: int, config: Conf
             new_floors_arr.append(starting_floor)
         insert_person(people_array, starting_floor, person, max_people_floor)
 
+    return new_floors_arr
+
+
+def generate_from_file(elevator_system: ElevatorSystem, step: int, config: ConfigSchema):
+    new_floors_arr = []
+    if step in scenario_by_step.keys():
+        for pair in scenario_by_step[step]:
+            starting_floor = int(pair['starting_floor'])
+            desired_floor = int(pair['desired_floor'])
+            person = Person(starting_floor=starting_floor, desired_floor=desired_floor, step=step)
+            if starting_floor not in new_floors_arr:
+                new_floors_arr.append(starting_floor)
+            insert_person(elevator_system.people_array, starting_floor, person, config.max_people_floor)
+    print(new_floors_arr)
     return new_floors_arr

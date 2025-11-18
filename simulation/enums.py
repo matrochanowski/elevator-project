@@ -65,6 +65,7 @@ class TrafficGeneratorEnum(str, Enum):
     INTERFLOOR = "interfloor"
     MIXED_PEAK = "mixed-peak"
     UNIFORM = "uniform"
+    FROM_FILE = "from file"
 
 
 class UpPeakParams(BaseModel):
@@ -117,3 +118,7 @@ class UniformParams(BaseModel):
         default=None,
         description="Distribution of target floors (if None, uniform)"
     )
+
+
+class FromFileParams(BaseModel):
+    filename: str = Field(description="Filename of the generated scenario")
