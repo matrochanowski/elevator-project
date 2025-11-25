@@ -233,7 +233,7 @@
      </palette>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page">
      <widget class="QPushButton" name="startButton">
@@ -989,7 +989,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="up_peak_page">
        <widget class="QLabel" name="label_18">
@@ -1209,6 +1209,31 @@
         </property>
        </widget>
       </widget>
+      <widget class="QWidget" name="page_6">
+       <widget class="QComboBox" name="scenarioFileComboBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>40</y>
+          <width>221</width>
+          <height>31</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_41">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>81</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Scenario file:</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
      <widget class="QCheckBox" name="randomButton">
       <property name="geometry">
@@ -1221,6 +1246,32 @@
       </property>
       <property name="text">
        <string>random</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="from_file_button">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>210</y>
+        <width>151</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Scenario from file</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="saveTrafficScenarioButton">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>290</y>
+        <width>141</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Generate Traffic Scenario</string>
       </property>
      </widget>
     </widget>
@@ -1719,6 +1770,8 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="images/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -1,9 +1,19 @@
 from PySide6.QtWidgets import QMessageBox
+import os
+from pathlib import Path
+
 from simulation.schema import ConfigSchema, ElevatorConfigSchema, TrafficConfigSchema
 from simulation.config import save_config, load_config
-from simulation.enums import AlgorithmEnum, TrafficGeneratorEnum, UpPeakParams, DownPeakParams, MixedPeakParams
+from simulation.enums import AlgorithmEnum, TrafficGeneratorEnum, UpPeakParams, DownPeakParams, MixedPeakParams, \
+    FromFileParams
 from simulation.utils import extract_params_suffix
+from simulation.engine.traffic_generator import generate_scenario_apriori
+
 from simulation.gui.core.table_helpers import setup_elevator_table
+from simulation.gui.dialogs.scenario_name_dialog import ScenarioNameDialog
+
+SIMULATION_DIR = Path(__file__).resolve().parents[2]
+SCENARIO_DIR = SIMULATION_DIR / "engine" / "scenarios"
 
 
 class ConfigPage:
@@ -14,6 +24,7 @@ class ConfigPage:
         self._connect_traffic_buttons()
         self._connect_elevator_logic()
         self.load_settings()
+        self.setup_scenario_combobox()
 
     # --- PUBLIC API ---
     def connect_buttons(self):
@@ -22,6 +33,7 @@ class ConfigPage:
         w.SaveButton.clicked.connect(self.save_settings)
         w.MenuButton.clicked.connect(w.show_main)
         w.TrafficConfigurationButton.clicked.connect(w.show_traffic_conf)
+        w.saveTrafficScenarioButton.clicked.connect(self.open_scenario_dialog)
 
         # Traffic page
         w.SaveButton_2.clicked.connect(self.save_settings)
@@ -47,6 +59,7 @@ class ConfigPage:
         w.up_peak_button.clicked.connect(self.set_up_peak)
         w.down_peak_button.clicked.connect(self.set_down_peak)
         w.mixed_peak_button.clicked.connect(self.set_mixed_peak)
+        w.from_file_button.clicked.connect(self.set_from_file)
         w.randomButton.clicked.connect(self.toggle_seed_visibility)
 
     # --- SETTINGS LOGIC ---
@@ -93,6 +106,8 @@ class ConfigPage:
                 w.mixed_up_peak_ratio_spinbox.setValue(p.up_peak_ratio)
                 w.mixed_down_peak_ratio_spinbox.setValue(p.down_peak_ratio)
                 w.mixed_interfloor_peak_ratio_spinbox.setValue(p.interfloor_ratio)
+            case TrafficGeneratorEnum("from file"):
+                self.set_from_file()
 
         w.intensitySpinBox.setValue(config.traffic.intensity)
         if config.traffic.seed is None:
@@ -154,9 +169,52 @@ class ConfigPage:
         self._set_mode(TrafficGeneratorEnum("mixed-peak"), 2)
         self.window.mixed_peak_button.setChecked(True)
 
+    def set_from_file(self):
+        self._set_mode(TrafficGeneratorEnum("from file"), 3)
+        self.window.from_file_button.setChecked(True)
+
     def _set_mode(self, mode, index):
         self.current_traffic_mode = mode
         self.window.traffic_stacked_widget.setCurrentIndex(index)
+
+    def setup_scenario_combobox(self):
+        self.window.scenarioFileComboBox.clear()
+
+        if not os.path.exists(SCENARIO_DIR):
+            raise FileExistsError(f"Directory {SCENARIO_DIR} doesn't exist!")
+
+        scenario_files = []
+        for file in os.listdir(SCENARIO_DIR):
+            scenario_files.append(file)
+
+        scenario_files.sort()
+        self.window.scenarioFileComboBox.addItems(scenario_files)
+
+        config = load_config()
+        if config.traffic.from_file_params:
+            if config.traffic.from_file_params.filename:
+                # set filename as "selected" in combobox
+                saved_filename = config.traffic.from_file_params.filename
+                index = self.window.scenarioFileComboBox.findText(saved_filename)
+                if index >= 0:
+                    self.window.scenarioFileComboBox.setCurrentIndex(index)
+                else:
+                    if scenario_files:
+                        self.window.scenarioFileComboBox.setCurrentIndex(0)
+            else:
+                if scenario_files:
+                    self.window.scenarioFileComboBox.setCurrentIndex(0)
+
+    def open_scenario_dialog(self):
+        self.save_settings()
+        dialog = ScenarioNameDialog(parent=self.window)
+        scenario_name = dialog.get_scenario_name()
+
+        if scenario_name:
+            full_filename = dialog.get_full_filename()
+            generate_scenario_apriori(scenario_name=full_filename, n_steps=self.window.StepsHorizontalSlider.value())
+            QMessageBox.information(self.window, "Saved", f"Scenario {scenario_name} saved successfully.")
+            self.setup_scenario_combobox()
 
     # --- SAVE SETTINGS ---
     def save_settings(self):
@@ -174,7 +232,7 @@ class ConfigPage:
         intensity = w.intensitySpinBox.value()
         seed = None if w.seedSpinBox.isHidden() else w.seedSpinBox.value()
 
-        up_peak_params = down_peak_params = mixed_peak_params = None
+        up_peak_params = down_peak_params = mixed_peak_params = from_file_params = None
         if traffic_mode == TrafficGeneratorEnum("up-peak"):
             up_peak_params = UpPeakParams(arrival_floor=w.arrval_floor_spin_box.value())
             if up_peak_params.arrival_floor > floors:
@@ -198,6 +256,10 @@ class ConfigPage:
             except ValueError:
                 QMessageBox.warning(w, "Bad parameters!", "Sum of ratios must equal 1.0")
                 return
+        elif traffic_mode == TrafficGeneratorEnum("from file"):
+            from_file_params = FromFileParams(
+                filename=w.scenarioFileComboBox.currentText()
+            )
 
         traffic = TrafficConfigSchema(
             generator_type=traffic_mode,
@@ -206,6 +268,7 @@ class ConfigPage:
             up_peak_params=up_peak_params,
             down_peak_params=down_peak_params,
             mixed_peak_params=mixed_peak_params,
+            from_file_params=from_file_params
         )
 
         # ELEVATORS

@@ -66,8 +66,9 @@ def insert_person(people_array, start_floor: int, person: Person, max_people_flo
 
 # ------------------ main generation dispatcher ------------------
 
-def generate_passengers(elevator_system: ElevatorSystem, step: int):
-    config: ConfigSchema = CONFIG
+def generate_passengers(elevator_system: ElevatorSystem, step: int, config=None):
+    if not config:
+        config: ConfigSchema = CONFIG
     generator_type = config.traffic.generator_type
 
     match generator_type:
@@ -78,7 +79,6 @@ def generate_passengers(elevator_system: ElevatorSystem, step: int):
         case TrafficGeneratorEnum('mixed-peak'):
             return generate_mixed_peak(elevator_system, step, config)
         case TrafficGeneratorEnum('from file'):
-            print("test 1")
             return generate_from_file(elevator_system, step, config)
     return []
 
@@ -86,14 +86,14 @@ def generate_passengers(elevator_system: ElevatorSystem, step: int):
 # --------------- apriori generator --------------
 
 def generate_scenario_apriori(n_steps: int, scenario_name: str):
-    config: ConfigSchema = CONFIG
+    config: ConfigSchema = load_config()
 
     fake_system = ElevatorSystem(config.floors, config.max_people_floor)
 
     scenario = []
 
     for step in range(n_steps):
-        generate_passengers(fake_system, step)
+        generate_passengers(fake_system, step, config=config)
         pair = 0
 
         for floor in fake_system.people_array:
@@ -105,7 +105,7 @@ def generate_scenario_apriori(n_steps: int, scenario_name: str):
 
         fake_system = ElevatorSystem(config.floors, config.max_people_floor)
 
-    path = f'{os.path.join(SCENARIO_DIR, scenario_name)}.csv'
+    path = os.path.join(SCENARIO_DIR, scenario_name)
     with open(path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['step', 'pair_number', 'starting_floor', 'desired_floor'])
@@ -239,5 +239,4 @@ def generate_from_file(elevator_system: ElevatorSystem, step: int, config: Confi
             if starting_floor not in new_floors_arr:
                 new_floors_arr.append(starting_floor)
             insert_person(elevator_system.people_array, starting_floor, person, config.max_people_floor)
-    print(new_floors_arr)
     return new_floors_arr
