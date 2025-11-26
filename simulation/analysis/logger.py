@@ -6,8 +6,8 @@ import pickle
 from simulation.core.elevator_system import ElevatorSystem
 from simulation import config
 
-SIMULATION_DIR = Path(__file__).resolve().parents[1]
-LOG_DIR = SIMULATION_DIR / "logs"
+REPO_DIR = Path(__file__).resolve().parents[2]
+LOG_DIR = REPO_DIR / "database" / "logs"
 CONFIG = config.load_config()
 
 

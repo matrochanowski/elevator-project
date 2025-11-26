@@ -13,8 +13,8 @@ from simulation.enums import TrafficGeneratorEnum
 
 CONFIG: ConfigSchema = load_config()
 
-ENGINE_DIR = Path(__file__).resolve().parents[0]
-SCENARIO_DIR = ENGINE_DIR / "scenarios"
+REPO_DIR = Path(__file__).resolve().parents[2]
+SCENARIO_DIR = REPO_DIR / "database" / "scenarios"
 
 if CONFIG.traffic.generator_type is TrafficGeneratorEnum('from file'):
     filename = CONFIG.traffic.from_file_params.filename

@@ -10,8 +10,8 @@ import pickle
 from pathlib import Path
 import os
 
-SIMULATION_DIR = Path(__file__).resolve().parents[1]
-LOG_DIR = SIMULATION_DIR / "logs"
+REPO_DIR = Path(__file__).resolve().parents[2]
+LOG_DIR = REPO_DIR / "database" / "logs"
 
 
 def analyse_from_file(filename: str) -> ResultsInfoForGui:

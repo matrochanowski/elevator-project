@@ -12,8 +12,8 @@ from simulation.engine.traffic_generator import generate_scenario_apriori
 from simulation.gui.core.table_helpers import setup_elevator_table
 from simulation.gui.dialogs.scenario_name_dialog import ScenarioNameDialog
 
-SIMULATION_DIR = Path(__file__).resolve().parents[2]
-SCENARIO_DIR = SIMULATION_DIR / "engine" / "scenarios"
+REPO_DIR = Path(__file__).resolve().parents[3]
+SCENARIO_DIR = REPO_DIR / "database" / "scenarios"
 
 
 class ConfigPage:

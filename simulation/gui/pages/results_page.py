@@ -11,8 +11,8 @@ from simulation.analysis.schema import ResultsInfoForGui
 from simulation.gui.dialogs.rename_file_dialog import RenameFileDialog
 from simulation.gui.dialogs.show_text_dialog import ShowTextDialog
 
-SIMULATION_DIR = Path(__file__).resolve().parents[2]
-LOG_DIR = SIMULATION_DIR / "logs"
+REPO_DIR = Path(__file__).resolve().parents[3]
+LOG_DIR = REPO_DIR / "database" / "logs"
 
 if TYPE_CHECKING:
     from simulation.gui.core.window_controller import ElevatorSimWindowController

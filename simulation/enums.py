@@ -37,7 +37,7 @@ class AlgorithmEnum(str, Enum):
                 return collective_control_policy
             case AlgorithmEnum.Q_LEARNING:
                 from simulation.controller.rl.agent_controller import AgentController
-                model_path = os.path.join(PROJECT_ROOT, "simulation", "controller", "rl", "models", self.value, model)
+                model_path = os.path.join(PROJECT_ROOT, "database", "models", self.value, model)
                 agent = AgentController(model_path)
                 return agent.use_agent
             case _:
@@ -48,7 +48,7 @@ class AlgorithmEnum(str, Enum):
             return []
 
         models_dir = os.path.join(
-            PROJECT_ROOT, "simulation", "controller", "rl", "models", self.value
+            PROJECT_ROOT, "database", "models", self.value
         )
         if not os.path.exists(models_dir):
             return []
