@@ -1,0 +1,8 @@
+algorithm: "q_learning"
+save_name: "model1.pkl"
+episodes: 20000
+q_learning_params:
+  alpha: 0.05
+  gamma: 0.95
+  starting_epsilon: 0.8
+  epsilon_decay: 0.995
