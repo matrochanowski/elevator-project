@@ -1,8 +1,14 @@
-algorithm: "q_learning"
-save_name: "model1.pkl"
-episodes: 20000
+algorithm: q_learning
+save_name: model
+episodes: 300
+steps_per_episode: 25000
 q_learning_params:
-  alpha: 0.05
-  gamma: 0.95
-  starting_epsilon: 0.8
-  epsilon_decay: 0.995
+  alpha: 0.5
+  gamma: 0.96
+  starting_epsilon: 0.5
+  epsilon_decay: 0.0
+reward_params:
+  penalty_outside: 0.02
+  penalty_inside: 0.0
+  reward_pick_up: 0.8
+  reward_delivery: 1.0

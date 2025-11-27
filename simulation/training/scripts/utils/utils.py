@@ -3,6 +3,10 @@ import numpy as np
 from simulation.core.elevator_system import ElevatorSystem
 from .schema import ElevatorSystemState, ElevatorState
 
+from simulation.training.config import load_training_config
+
+
+TRAINING_CONFIG = load_training_config()
 
 def get_state(system: ElevatorSystem):
     """
@@ -91,52 +95,28 @@ def decode_state(state, system: ElevatorSystem) -> ElevatorSystemState:
 def reward_function(prev_state: ElevatorSystemState,
                     next_state: ElevatorSystemState,
                     action: list) -> float:
-    """
-    Oblicza nagrodę dla systemu wind.
-
-    Zasady:
-    1. +1 za każde zewnętrzne wezwanie, które zniknęło (pasażer odebrany)
-    2. +1 za każde wewnętrzne wezwanie, które zniknęło (pasażer wysadzony)
-    3. Kara -10 jeśli winda próbuje jechać poza zakres budynku
-    4. Nagroda za ruch w kierunku zgłoszeń: 1/distance do najbliższego zgłoszenia w danym kierunku
-    """
+    reward_params = TRAINING_CONFIG.reward_params
     reward = 0.0
-    n_elevators = len(prev_state.elevators)
-    max_floor = max(prev_state.elevators[0].current_floor, *(e.current_floor for e in
-                                                             prev_state.elevators))  # zakładamy, że wszystkie windy w tym samym system.max_floor
 
-    # --- 1. Odebrani pasażerowie (zewnętrzne wezwania) ---
+    # === reward: pick-up ===
     prev_external = set(prev_state.external_calls)
     next_external = set(next_state.external_calls)
     removed_external = prev_external - next_external
-    reward += len(removed_external) * 10
+    reward += len(removed_external) * 10 * reward_params.reward_pick_up
 
-    # --- 2. Wysadzeni pasażerowie (wewnętrzne zgłoszenia) ---
+    # === reward: delivery ===
     for prev_e, next_e in zip(prev_state.elevators, next_state.elevators):
         removed_internal = set(prev_e.chosen_floors) - set(next_e.chosen_floors)
-        reward += len(removed_internal) * 10
+        reward += len(removed_internal) * 10 * reward_params.reward_delivery
 
-    # --- 3. Ruch zgodny z akcją i kierunkiem zgłoszeń ---
-    for i, (prev_e, act) in enumerate(zip(prev_state.elevators, action)):
-        floor = prev_e.current_floor
-        max_f = max_floor
+    # === penalty: people waiting outside ===
+    # liczba pięter, na których ktoś czeka
+    n_waiting_outside = len(next_state.external_calls)
+    reward -= n_waiting_outside * reward_params.penalty_outside
 
-        # --- sprawdzenie najbliższego zgłoszenia w danym kierunku ---
-        targets = set(prev_e.chosen_floors) | set(prev_state.external_calls)
-
-        if not targets:
-            continue  # brak zgłoszeń, brak dodatkowej nagrody
-
-        if act == "UP":
-            higher_targets = [f for f in targets if f > floor]
-            if higher_targets:
-                distance = min(higher_targets) - floor
-                reward += 0.0 / distance
-        elif act == "DOWN":
-            lower_targets = [f for f in targets if f < floor]
-            if lower_targets:
-                distance = floor - max(lower_targets)
-                reward += 0.0 / distance
-        # STANDING → brak dodatkowej nagrody
+    # === penalty: people inside elevators ===
+    n_inside = sum(len(e.chosen_floors) for e in next_state.elevators)
+    reward -= n_inside * reward_params.penalty_inside
 
     return reward
+

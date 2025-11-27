@@ -36,10 +36,10 @@ class AlgorithmEnum(str, Enum):
                 from simulation.controller.classical.collective_control_policy import collective_control_policy
                 return collective_control_policy
             case AlgorithmEnum.Q_LEARNING:
-                from simulation.controller.rl.agent_controller import AgentController
+                from simulation.controller.rl.agent_controller import AgentsGroupController
                 model_path = os.path.join(PROJECT_ROOT, "database", "models", self.value, model)
-                agent = AgentController(model_path)
-                return agent.use_agent
+                agent = AgentsGroupController(model_path)
+                return agent.use_agents
             case _:
                 return None
 

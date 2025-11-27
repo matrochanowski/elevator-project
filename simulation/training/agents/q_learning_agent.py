@@ -4,10 +4,12 @@ import pickle
 from collections import defaultdict, deque
 from openpyxl import Workbook
 from pathlib import Path
+from typing import List
 import os
 from simulation import config
 
 TRAINING_ROOT = Path(__file__).resolve().parents[1]
+MODELS_DATABASE = Path(__file__).resolve().parents[3] / "database" / "models" / "q_learning"
 cfg = config.load_config()
 
 
@@ -33,7 +35,6 @@ class QLearningAgent:
             case _:
                 return self.update_with_buffer(state, action, reward, next_state)
 
-
     def update_with_buffer(self, state, action, reward, next_state):
         self.buffer.append((state, action, reward, next_state))
 
@@ -58,8 +59,8 @@ class QLearningAgent:
         """
         suffix = "_" + str(len(cfg.elevators)) + "_" + str(cfg.floors)
         whole_path = os.path.join(TRAINING_ROOT, "models", filename + suffix + ".pkl")
-        with open(whole_path, "wb") as f:
-            pickle.dump((dict(self.q_table), self.actions, self.alpha, self.gamma, self.epsilon), f)
+        group = QLearningAgentsGroup([self])
+        group.save(filename)
 
     def save_to_xlsx(self, path: str):
         wb = Workbook()
@@ -88,3 +89,45 @@ class QLearningAgent:
 
         agent.q_table = defaultdict(lambda: np.zeros(len(actions)), q_table_dict)
         return agent
+
+
+class QLearningAgentsGroup:
+    def __init__(self, agents: List[QLearningAgent]):
+        self.agents = agents
+
+    def save(self, filename: str) -> str:
+        suffix = "_" + str(len(cfg.elevators)) + "_" + str(cfg.floors)
+        whole_path = os.path.join(MODELS_DATABASE, filename + suffix + ".pkl")
+
+        data = []
+        for agent in self.agents:
+            data.append({
+                "q_table": dict(agent.q_table),
+                "actions": agent.actions,
+                "alpha": agent.alpha,
+                "gamma": agent.gamma,
+                "epsilon": agent.epsilon
+            })
+
+        with open(whole_path, "wb") as f:
+            pickle.dump(data, f)
+
+        return whole_path
+
+    @classmethod
+    def load(cls, path: str):
+        with open(path, "rb") as f:
+            loaded = pickle.load(f)
+
+        agents = []
+        for entry in loaded:
+            agent = QLearningAgent(
+                actions=entry["actions"],
+                alpha=entry["alpha"],
+                gamma=entry["gamma"],
+                epsilon=entry["epsilon"]
+            )
+            agent.q_table = defaultdict(lambda: np.zeros(len(entry["actions"])), entry["q_table"])
+            agents.append(agent)
+
+        return cls(agents)

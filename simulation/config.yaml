@@ -1,7 +1,7 @@
-floors: 10
+floors: 3
 max_people_floor: 12
-steps: 86400
-visualisation: false
+steps: 10000
+visualisation: true
 elevators:
 - max_people: 5
   speed: 5
@@ -9,20 +9,16 @@ elevators:
 - max_people: 5
   speed: 5
   starting_floor: 0
-- max_people: 5
-  speed: 5
-  starting_floor: 0
-algorithm: collective_control
-model: null
+algorithm: q_learning
+model: model_2_3.pkl
 traffic:
-  generator_type: up-peak
-  intensity: 0.09
+  generator_type: from file
+  intensity: 0.05
   seed: null
-  up_peak_params:
-    arrival_floor: 0
-    destination_distribution: null
+  up_peak_params: null
   down_peak_params: null
   interfloor_params: null
   mixed_peak_params: null
   uniform_params: null
-  from_file_params: null
+  from_file_params:
+    filename: deterministic_scenario25ksteps.csv
