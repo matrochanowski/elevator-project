@@ -14,7 +14,7 @@ cfg = config.load_config()
 
 
 class QLearningAgent:
-    def __init__(self, actions, alpha=0.1, gamma=0.95, epsilon=0.5, buffer_size=0):
+    def __init__(self, actions, alpha=0.1, gamma=0.95, epsilon=0.5, epsilon_decay=0, buffer_size=0):
         self.q_table = defaultdict(lambda: np.zeros(len(actions)))
         self.actions = actions
         self.alpha = alpha
@@ -22,8 +22,11 @@ class QLearningAgent:
         self.epsilon = epsilon
         self.buffer_size = buffer_size
         self.buffer = deque(maxlen=buffer_size)
+        self.epsilon_decay = epsilon_decay
+        self.epsilon_min = 0.05
 
     def choose_action(self, state):
+        self.decay_epsilon()
         if random.random() < self.epsilon:
             return random.randrange(len(self.actions))
         return int(np.argmax(self.q_table[state]))
@@ -49,6 +52,12 @@ class QLearningAgent:
         best_next = np.max(self.q_table[next_state])
         old_value = self.q_table[state][action]
         self.q_table[state][action] = old_value + self.alpha * (reward + self.gamma * best_next - old_value)
+
+    def decay_epsilon(self):
+        if self.epsilon < self.epsilon_min:  # in case we want 0 epsilon for control
+            return
+        decay_rate = self.epsilon_decay
+        self.epsilon = max(self.epsilon_min, self.epsilon * decay_rate)
 
     def save(self, filename: str):
         """

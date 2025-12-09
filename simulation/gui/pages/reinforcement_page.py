@@ -121,7 +121,7 @@ class ReinforcementPage:
 
         # --- algorithm ---
         alg_enum = w.RlAlgorithmComboBox.currentData()
-        alg_enum = AlgorithmEnum(alg_enum) 
+        alg_enum = AlgorithmEnum(alg_enum)
 
         algorithm_value = alg_enum.value
 

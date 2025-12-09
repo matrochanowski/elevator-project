@@ -8,10 +8,13 @@ class AgentsGroupController:
         try:
             group = QLearningAgentsGroup.load(model_path)
             self.agents = group.agents
+
         except Exception as e:
             print(e)
             agent = QLearningAgent.load(model_path)
             self.agents = [agent]
+        for agent in self.agents:
+            agent.epsilon = 0
 
     def use_agents(self, elevator_system: ElevatorSystem):
         state = get_state(elevator_system)

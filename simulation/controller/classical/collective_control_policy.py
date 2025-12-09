@@ -12,12 +12,13 @@ def collective_control_policy(elevator_system: ElevatorSystem):
 
     for i, elevator in enumerate(elevator_system.elevators):
         current_floor = elevator.current_floor
-        direction = elevator.state  # "UP", "DOWN", "STANDING"
+        direction = elevator.state
 
-        # Floors to serve: internal + requested
-        targets = set(elevator.chosen_floors).union(elevator_system.requested_floors)
+        if elevator.people_inside_int >= elevator.max_people_inside:
+            targets = set(elevator.chosen_floors)
+        else:
+            targets = set(elevator.chosen_floors).union(elevator_system.requested_floors)
 
-        # --- Stop if we are on a target floor ---
         if current_floor in targets:
             actions[i] = "STANDING"
             continue
@@ -26,7 +27,6 @@ def collective_control_policy(elevator_system: ElevatorSystem):
             actions[i] = "STANDING"
             continue
 
-        # Separate floors by relative position
         above = [f for f in targets if f > current_floor]
         below = [f for f in targets if f < current_floor]
 
@@ -34,7 +34,7 @@ def collective_control_policy(elevator_system: ElevatorSystem):
             actions[i] = "UP" if above else ("DOWN" if below else "STANDING")
         elif direction == "DOWN":
             actions[i] = "DOWN" if below else ("UP" if above else "STANDING")
-        else:  # STANDING
+        else:
             if above and below:
                 nearest_above = min(above) - current_floor
                 nearest_below = current_floor - max(below)
