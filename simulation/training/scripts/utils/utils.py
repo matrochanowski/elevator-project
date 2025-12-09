@@ -5,8 +5,8 @@ from .schema import ElevatorSystemState, ElevatorState
 
 from simulation.training.config import load_training_config
 
-
 TRAINING_CONFIG = load_training_config()
+
 
 def get_state(system: ElevatorSystem):
     """
@@ -114,9 +114,10 @@ def reward_function(prev_state: ElevatorSystemState,
     n_waiting_outside = len(next_state.external_calls)
     reward -= n_waiting_outside * reward_params.penalty_outside
 
+    # EXPERIMENTAL
+
     # === penalty: people inside elevators ===
     n_inside = sum(len(e.chosen_floors) for e in next_state.elevators)
     reward -= n_inside * reward_params.penalty_inside
 
     return reward
-

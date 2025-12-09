@@ -60,6 +60,7 @@ def train_q_learning(episodes=100,
                 decode_state(state_after, system),
                 actions
             )
+
             reward_sum += reward
 
             for i in range(len(agents)):
@@ -69,40 +70,59 @@ def train_q_learning(episodes=100,
             state = state_after
 
         print(f"Episode {ep + 1}/{episodes} finished. Reward: {reward_sum}")
+        print(agents_group.agents[0].epsilon, agents_group.agents[1].epsilon, )
         whole_reward += reward_sum
 
     return QLearningAgentsGroup(agents), whole_reward / episodes
 
 
 if __name__ == "__main__":
+
     rewards = []
-    buffer_size = 0
+    buffer_size = 25
     agt1 = QLearningAgent(ACTIONS, gamma=0.96, alpha=0.5, buffer_size=buffer_size)
     agt2 = QLearningAgent(ACTIONS, gamma=0.96, alpha=0.5, buffer_size=buffer_size)
 
     group = QLearningAgentsGroup([agt1, agt2])
 
+    # group = QLearningAgentsGroup.load(
+    #     r"C:\Users\Mateusz\projects\elevator-project\database\models\q_learning\third_validation_scenario_2_5.pkl")
+    group.agents[0].epsilon_decay = 0.999998
+    group.agents[1].epsilon_decay = 0.999998
+    group.agents[0].epsilon = 0.6
+    group.agents[1].epsilon = 0.6
+    group.agents[0].gamma = 0.95
+    group.agents[1].gamma = 0.95
+    group.agents[0].alpha = 0.5
+    group.agents[1].alpha = 0.5
+    group.agents[0].epsilon_min = 0.35
+    group.agents[1].epsilon_min = 0.35
+
     trained_group, reward = train_q_learning(
-        episodes=5,
-        steps=1000,
+        episodes=20,
+        steps=2500,
         agents_group=group
     )
     rewards.append(reward)
 
-    n = 20
+    n = 30
 
     for i in range(n):
         trained_group, reward = train_q_learning(
             episodes=20,
-            steps=1000,
+            steps=2500,
             agents_group=trained_group
         )
         rewards.append(reward)
+        # if i % 500 == 0:
+        #     trained_group.save(f"checkpoints/with_buffer{i / 1000}")
+        #
+        #     trained_group.save("experiment_no_buffer")
 
-    trained_group.save("2_agents_test")
+    trained_group.save("third_validation_scenario")
 
-        # if i % 1000 == 0:
-        #     trained_agent.save(f"checkpoints/with_buffer{i / 1000}")
+    # if i % 1000 == 0:
+    #     trained_agent.save(f"checkpoints/with_buffer{i / 1000}")
 
     # trained_agent[0].save("experiment_no_buffer")
     # trained_agent.save_to_xlsx("q_matrix1.xlsx")

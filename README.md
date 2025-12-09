@@ -11,11 +11,6 @@ Zarządzanie ruchem wind w budynkach o dużym natężeniu ruchu to problem decyz
 System sterowania musi w czasie rzeczywistym minimalizować czas oczekiwania pasażerów oraz optymalizować zużycie energii.  
 Zastosowanie **uczenia ze wzmocnieniem (RL)** pozwala agentowi uczyć się optymalnych strategii poprzez interakcję ze środowiskiem — w tym przypadku z symulatorem wind.
 
-W projekcie zastosowano klasyczne i nowoczesne algorytmy RL, takie jak:
-- **Q-Learning**
-- **Deep Q-Network (DQN)**
-- **DRQN (Deep Recurrent Q-Network)** z warstwami LSTM dla pamięci sekwencyjnej
-
 Środowisko zostało zaimplementowane w Pythonie i pozwala definiować parametry budynku, liczbę wind, strategię sterowania oraz obserwować efekty działania agenta w GUI.
 
 ---
@@ -25,6 +20,10 @@ W projekcie zastosowano klasyczne i nowoczesne algorytmy RL, takie jak:
 ---
 
 ## ⚙️ Instrukcja uruchomienia
+
+Wymagania:
+* Zainstalowany Python wersja 3.13.
+* Zainstalowany Git.
 
 Aby uruchomić projekt lokalnie:
 
@@ -48,4 +47,4 @@ Aby uruchomić projekt lokalnie:
 4. Uruchom symulację z GUI:
     
     ```bash
-    python simulation/gui/main.py
+    python -m simulation.gui.main
